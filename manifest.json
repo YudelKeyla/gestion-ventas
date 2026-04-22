@@ -1,7 +1,7 @@
 {
     "name": "Gestión de Ventas",
     "short_name": "Ventas",
-    "start_url": ".https://yudelkeyla.github.io/gestion-ventas/",
+    "start_url": "https://yudelkeyla.github.io/gestion-ventas/",
     "display": "standalone",
     "background_color": "#1a1a2e",
     "theme_color": "#1a1a2e",
