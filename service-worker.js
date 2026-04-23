@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ventas-app-v2';
+const CACHE_NAME = 'ventas-app-v3';
 const urlsToCache = [
   './',
   './index.html',
@@ -6,7 +6,9 @@ const urlsToCache = [
   './script.js',
   './manifest.json',
   './icon-192.png',
-  './icon-512.png'
+  './icon-512.png',
+  './chart.min.js',    // ← NUEVO
+  './xlsx.min.js'      // ← NUEVO
 ];
 
 self.addEventListener('install', event => {

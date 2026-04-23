@@ -4,14 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
     <title>Gestión de Ventas YudelKeyla</title>
-    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
-<link rel="apple-touch-icon" href="icon-192.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png" />
+    <link rel="apple-touch-icon" href="icon-192.png" />
     <link rel="stylesheet" href="style.css" />
     <link rel="manifest" href="manifest.json" />
-    <!-- Chart.js para gráficos -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-    <!-- SheetJS para exportar Excel -->
-    <script src="https://cdn.sheetjs.com/xlsx-0.20.1/package/dist/xlsx.full.min.js"></script>
+    <script src="chart.min.js"></script>
+    <script src="xlsx.min.js"></script>
   </head>
   <body>
     <div class="app">
@@ -192,18 +190,21 @@
 
     <script src="script.js"></script>
     <!-- Registrar Service Worker para modo OFFLINE -->
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./service-worker.js', {
-      scope: './'
-    }).then(function(registration) {
-      console.log('✅ Service Worker registrado. ¡App offline lista!');
-    }).catch(function(err) {
-      console.log('❌ Error en Service Worker:', err);
-    });
-  });
-}
-</script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function () {
+          navigator.serviceWorker
+            .register('./service-worker.js', {
+              scope: './'
+            })
+            .then(function (registration) {
+              console.log('✅ Service Worker registrado. ¡App offline lista!')
+            })
+            .catch(function (err) {
+              console.log('❌ Error en Service Worker:', err)
+            })
+        })
+      }
+    </script>
   </body>
 </html>
