@@ -7,10 +7,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: system-ui, -apple-system, sans-serif;
-    background: #f0f2f5;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;  /* ← AGREGAR ESTA LÍNEA */
+    background: #1a1a2e;
     min-height: 100vh;
 }
 
@@ -49,6 +46,9 @@ body {
     letter-spacing: 15px;
     padding: 15px;
     margin-bottom: 20px;
+    border: 2px solid #e0e0e0;
+    border-radius: 14px;
+    width: 100%;
 }
 
 .pin-buttons {
@@ -84,6 +84,7 @@ body {
 .app {
     width: 100%;
     max-width: 450px;
+    margin: 0 auto;
     background: white;
     min-height: 100vh;
     box-shadow: 0 0 20px rgba(0,0,0,0.05);
