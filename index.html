@@ -191,5 +191,19 @@
     </div>
 
     <script src="script.js"></script>
+    <!-- Registrar Service Worker para modo OFFLINE -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function() {
+    navigator.serviceWorker.register('./service-worker.js', {
+      scope: './'
+    }).then(function(registration) {
+      console.log('✅ Service Worker registrado. ¡App offline lista!');
+    }).catch(function(err) {
+      console.log('❌ Error en Service Worker:', err);
+    });
+  });
+}
+</script>
   </body>
 </html>
