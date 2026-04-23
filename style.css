@@ -10,6 +10,7 @@ body {
     background: #f0f2f5;
     display: flex;
     justify-content: center;
+    align-items: flex-start;  /* ← AGREGAR ESTA LÍNEA */
     min-height: 100vh;
 }
 
