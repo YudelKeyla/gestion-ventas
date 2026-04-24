@@ -101,64 +101,61 @@
             </div>
         </div>
 
-        <!-- PESTAÑA VENDER -->
-        <div class="tab-content" id="tab-venta">
-            <div class="venta-container">
-                <div class="selector-producto">
-    <label>Seleccionar producto:</label>
-    
-    <!-- Área que se toca para abrir el modal -->
-    <div id="selectorVisual" style="padding: 14px; border: 2px solid #e0e0e0; border-radius: 14px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="abrirModalProductoVenta()">
-        <span id="textoSeleccionProducto" style="color: #9ca3af;">Toca para seleccionar un producto...</span>
-        <span id="precioSeleccionVisual" style="font-weight: bold; color: #0f3460;"></span>
-        <span id="btnQuitarSeleccionVisual" style="display: none; cursor: pointer; color: #dc2626; font-size: 18px;" onclick="event.stopPropagation(); deseleccionarProducto();">✕</span>
-    </div>
-    
-    <!-- Indicador adicional de selección (igual que antes) -->
-    <div id="productoSeleccionadoInfo" style="display: none; margin-top: 10px;">
-        <div style="background: #e8f5e9; padding: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+       <!-- PESTAÑA VENDER -->
+<div class="tab-content" id="tab-venta">
+    <div class="venta-container">
+        <div class="selector-producto">
+            <label>Seleccionar producto:</label>
+            
+            <!-- Área que se toca para abrir el modal -->
+            <div id="selectorVisual" style="padding: 14px; border: 2px solid #e0e0e0; border-radius: 14px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="abrirModalProductoVenta()">
+                <span id="textoSeleccionProducto" style="color: #9ca3af;">Toca para seleccionar un producto...</span>
+                <span id="precioSeleccionVisual" style="font-weight: bold; color: #0f3460;"></span>
+                <span id="btnQuitarSeleccionVisual" style="display: none; cursor: pointer; color: #dc2626; font-size: 18px;" onclick="event.stopPropagation(); deseleccionarProducto();">✕</span>
+            </div>
+            
+            <!-- Indicador adicional de selección -->
+            <div id="productoSeleccionadoInfo" style="display: none; margin-top: 10px;">
+                <div style="background: #e8f5e9; padding: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <strong>Seleccionado:</strong> <span id="nombreProductoSeleccionado"></span><br>
+                        <small>Precio: <span id="precioProductoSeleccionado"></span> | Stock: <span id="stockProductoSeleccionado"></span></small>
+                    </div>
+                    <button class="btn-icon" id="btnDeseleccionarProducto" title="Quitar selección">✕</button>
+                </div>
+            </div>
+            
+            <!-- Solo un input oculto para el ID -->
+            <input type="hidden" id="selectProductoVenta" value="" />
+        </div>
+
+        <div class="cantidad-precio">
             <div>
-                <strong>Seleccionado:</strong> <span id="nombreProductoSeleccionado"></span><br>
-                <small>Precio: <span id="precioProductoSeleccionado"></span> | Stock: <span id="stockProductoSeleccionado"></span></small>
+                <label>Cantidad:</label>
+                <input type="number" id="cantidadVenta" value="1" min="1" />
             </div>
-            <button class="btn-icon" id="btnDeseleccionarProducto" title="Quitar selección">✕</button>
+            <div>
+                <label>Precio Unit.:</label>
+                <span id="precioUnitarioMostrar">$0.00</span>
+            </div>
+        </div>
+
+        <button class="btn-primary btn-large" id="btnAgregarAlCarrito">🛒 Agregar al Carrito</button>
+
+        <div class="carrito-section">
+            <h3>🛍️ Carrito Actual</h3>
+            <div class="carrito-items" id="carritoItems">
+                <div class="empty-state">Carrito vacío</div>
+            </div>
+            <div class="carrito-total">
+                <strong>Total:</strong>
+                <span id="totalCarrito">$0.00</span>
+            </div>
+            <button class="btn-success btn-large" id="btnFinalizarVenta">✅ Finalizar Venta</button>
+            <button class="btn-secondary btn-large" id="btnVaciarCarrito" style="margin-top: 5px;">🗑️ Vaciar Carrito</button>
         </div>
     </div>
-    
-    <input type="hidden" id="selectProductoVenta" value="" />
 </div>
-                    
-                    <!-- ID del producto seleccionado (oculto) -->
-                    <input type="hidden" id="selectProductoVenta" value="" />
-                </div>
-
-                <div class="cantidad-precio">
-                    <div>
-                        <label>Cantidad:</label>
-                        <input type="number" id="cantidadVenta" value="1" min="1" />
-                    </div>
-                    <div>
-                        <label>Precio Unit.:</label>
-                        <span id="precioUnitarioMostrar">$0.00</span>
-                    </div>
-                </div>
-
-                <button class="btn-primary btn-large" id="btnAgregarAlCarrito">🛒 Agregar al Carrito</button>
-
-                <div class="carrito-section">
-                    <h3>🛍️ Carrito Actual</h3>
-                    <div class="carrito-items" id="carritoItems">
-                        <div class="empty-state">Carrito vacío</div>
-                    </div>
-                    <div class="carrito-total">
-                        <strong>Total:</strong>
-                        <span id="totalCarrito">$0.00</span>
-                    </div>
-                    <button class="btn-success btn-large" id="btnFinalizarVenta">✅ Finalizar Venta</button>
-                    <button class="btn-secondary btn-large" id="btnVaciarCarrito" style="margin-top: 5px;">🗑️ Vaciar Carrito</button>
-                </div>
-            </div>
-        </div>
 
         <!-- PESTAÑA HISTORIAL -->
         <div class="tab-content" id="tab-historial">
