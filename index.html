@@ -105,29 +105,28 @@
         <div class="tab-content" id="tab-venta">
             <div class="venta-container">
                 <div class="selector-producto">
-                    <label>Seleccionar producto:</label>
-                    
-                    <!-- Buscador para ventas -->
-                    <div class="search-bar" style="margin-bottom: 5px;">
-                        <input type="text" id="buscarProductoVenta" placeholder="🔍 Buscar producto..." autocomplete="off" />
-                        <button class="btn-icon" id="btnLimpiarBusquedaVenta" title="Limpiar">✕</button>
-                    </div>
-                    
-                    <!-- Lista de productos seleccionable -->
-                    <div class="lista-productos-venta" id="listaProductosVenta">
-                        <div class="empty-state">No hay productos disponibles</div>
-                    </div>
-                    
-                    <!-- Producto seleccionado -->
-                    <div id="productoSeleccionadoInfo" style="display: none; margin-top: 10px;">
-                        <div style="background: #e8f5e9; padding: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
-                            <div>
-                                <strong>Seleccionado:</strong> <span id="nombreProductoSeleccionado"></span><br>
-                                <small>Precio: <span id="precioProductoSeleccionado"></span> | Stock: <span id="stockProductoSeleccionado"></span></small>
-                            </div>
-                            <button class="btn-icon" id="btnDeseleccionarProducto" title="Quitar selección">✕</button>
-                        </div>
-                    </div>
+    <label>Seleccionar producto:</label>
+    
+    <!-- Área que se toca para abrir el modal -->
+    <div id="selectorVisual" style="padding: 14px; border: 2px solid #e0e0e0; border-radius: 14px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="abrirModalProductoVenta()">
+        <span id="textoSeleccionProducto" style="color: #9ca3af;">Toca para seleccionar un producto...</span>
+        <span id="precioSeleccionVisual" style="font-weight: bold; color: #0f3460;"></span>
+        <span id="btnQuitarSeleccionVisual" style="display: none; cursor: pointer; color: #dc2626; font-size: 18px;" onclick="event.stopPropagation(); deseleccionarProducto();">✕</span>
+    </div>
+    
+    <!-- Indicador adicional de selección (igual que antes) -->
+    <div id="productoSeleccionadoInfo" style="display: none; margin-top: 10px;">
+        <div style="background: #e8f5e9; padding: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <strong>Seleccionado:</strong> <span id="nombreProductoSeleccionado"></span><br>
+                <small>Precio: <span id="precioProductoSeleccionado"></span> | Stock: <span id="stockProductoSeleccionado"></span></small>
+            </div>
+            <button class="btn-icon" id="btnDeseleccionarProducto" title="Quitar selección">✕</button>
+        </div>
+    </div>
+    
+    <input type="hidden" id="selectProductoVenta" value="" />
+</div>
                     
                     <!-- ID del producto seleccionado (oculto) -->
                     <input type="hidden" id="selectProductoVenta" value="" />
@@ -278,6 +277,24 @@
             </div>
         </div>
     </div>
+    <!-- MODAL PARA SELECCIONAR PRODUCTO EN VENTA -->
+<div id="modalProductoVenta" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 20px; border-radius: 20px; width: 90%; max-width: 400px; max-height: 80%; display: flex; flex-direction: column;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <h3 style="margin: 0;">📦 Buscar Producto</h3>
+            <button id="btnCerrarModalProducto" style="background: #fee2e2; color: #dc2626; border: none; padding: 8px 15px; border-radius: 10px; font-size: 16px; cursor: pointer;">✕</button>
+        </div>
+        <!-- Barra de búsqueda -->
+        <div class="search-bar" style="margin-bottom: 10px;">
+            <input type="text" id="buscarProductoVenta" placeholder="🔍 Buscar producto..." autocomplete="off" />
+            <button class="btn-icon" id="btnLimpiarBusquedaVenta" title="Limpiar">✕</button>
+        </div>
+        <!-- Lista de productos -->
+        <div class="lista-productos-venta" id="listaProductosVenta" style="flex: 1; overflow-y: auto; border: 2px solid #e0e0e0; border-radius: 14px;">
+            <div class="empty-state">Cargando...</div>
+        </div>
+    </div>
+</div>
 
     <!-- Registrar Service Worker -->
     <script>
