@@ -483,6 +483,8 @@ btnFinalizar.addEventListener('click', () => {
 const historialListDiv = document.getElementById('historialList');
 const totalDelDiaSpan = document.getElementById('totalDelDia');
 const totalDelMesSpan = document.getElementById('totalDelMes');
+const gananciaDelDiaSpan = document.getElementById('gananciaDelDia');
+const gananciaDelMesSpan = document.getElementById('gananciaDelMes');
 const filtroFecha = document.getElementById('filtroFecha');
 const filtroMes = document.getElementById('filtroMes');
 const filtroAnio = document.getElementById('filtroAnio');
@@ -514,14 +516,37 @@ function actualizarHistorial(ventasFiltradas = null) {
 
 function actualizarTotalDelDia() {
     const hoy = new Date().toLocaleDateString('es-ES');
-    const total = historialVentas.filter(v => new Date(v.fecha).toLocaleDateString('es-ES') === hoy).reduce((s, v) => s + v.total, 0);
-    totalDelDiaSpan.textContent = `$${total.toFixed(2)}`;
+    const ventasHoy = historialVentas.filter(v => new Date(v.fecha).toLocaleDateString('es-ES') === hoy);
+    
+    // Calcular venta total del día
+    const totalVenta = ventasHoy.reduce((s, v) => s + v.total, 0);
+    totalDelDiaSpan.textContent = `$${totalVenta.toFixed(2)}`;
+    
+    // Calcular ganancia total del día
+    const totalGanancia = ventasHoy.reduce((s, v) => {
+        const gananciaVenta = v.productos.reduce((sum, p) => sum + ((p.precio - (p.precioCosto || 0)) * p.cantidad), 0);
+        return s + gananciaVenta;
+    }, 0);
+    gananciaDelDiaSpan.textContent = `$${totalGanancia.toFixed(2)}`;
 }
 
 function actualizarTotalDelMes() {
     const ahora = new Date();
-    const total = historialVentas.filter(v => { const f = new Date(v.fecha); return f.getMonth() === ahora.getMonth() && f.getFullYear() === ahora.getFullYear(); }).reduce((s, v) => s + v.total, 0);
-    totalDelMesSpan.textContent = `$${total.toFixed(2)}`;
+    const ventasMes = historialVentas.filter(v => {
+        const f = new Date(v.fecha);
+        return f.getMonth() === ahora.getMonth() && f.getFullYear() === ahora.getFullYear();
+    });
+    
+    // Calcular venta total del mes
+    const totalVenta = ventasMes.reduce((s, v) => s + v.total, 0);
+    totalDelMesSpan.textContent = `$${totalVenta.toFixed(2)}`;
+    
+    // Calcular ganancia total del mes
+    const totalGanancia = ventasMes.reduce((s, v) => {
+        const gananciaVenta = v.productos.reduce((sum, p) => sum + ((p.precio - (p.precioCosto || 0)) * p.cantidad), 0);
+        return s + gananciaVenta;
+    }, 0);
+    gananciaDelMesSpan.textContent = `$${totalGanancia.toFixed(2)}`;
 }
 
 document.getElementById('btnLimpiarHistorial').addEventListener('click', () => {
