@@ -32,185 +32,244 @@
             </div>
             <button class="btn-primary" id="btnIngresar">Ingresar</button>
             <p id="pinError" style="color: #e94560; margin-top: 10px; display: none;">PIN incorrecto</p>
-            <p style="margin-top: 15px; font-size: 12px; color: #666;">PIN: 1234</p>
+            <p style="margin-top: 15px; font-size: 12px; color: #666;">PIN: XXXX</p>
         </div>
     </div>
 
     <!-- ==================== APP PRINCIPAL ==================== -->
     <div id="mainApp" class="app" style="display: none;">
-            <div class="header">
-                <h1>🧾 Ventas YudelKeyla</h1>
-                <div class="tabs">
-                    <button class="tab-btn active" data-tab="productos">📦 Productos</button>
-                    <button class="tab-btn" data-tab="venta">💰 Vender</button>
-                    <button class="tab-btn" data-tab="historial">📋 Historial</button>
-                    <button class="tab-btn" data-tab="estadisticas">📊 Estadísticas</button>
+        <div class="header">
+            <h1>🧾 Ventas YudelKeyla</h1>
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="productos">📦 Productos</button>
+                <button class="tab-btn" data-tab="venta">💰 Vender</button>
+                <button class="tab-btn" data-tab="historial">📋 Historial</button>
+                <button class="tab-btn" data-tab="estadisticas">📊 Estadísticas</button>
+            </div>
+        </div>
+
+        <!-- PESTAÑA PRODUCTOS -->
+        <div class="tab-content active" id="tab-productos">
+            <div class="form-card">
+                <h2 id="formTitle">➕ Agregar Producto</h2>
+                <input type="hidden" id="editandoId" value="" />
+                <input type="text" id="nombreProducto" placeholder="Nombre del producto (ej: Galleta Saltina)" autocomplete="off" />
+                
+                <div class="input-row">
+                    <div>
+                        <label>Precio Costo</label>
+                        <input type="number" id="precioCostoProducto" placeholder="$ Costo" step="0.01" min="0" />
+                    </div>
+                    <div>
+                        <label>Precio Venta</label>
+                        <input type="number" id="precioVentaProducto" placeholder="$ Venta" step="0.01" min="0" />
+                    </div>
+                </div>
+
+                <div class="input-row">
+                    <div>
+                        <label>Stock Inicial</label>
+                        <input type="number" id="cantidadProducto" placeholder="Cantidad" min="1" value="1" />
+                    </div>
+                    <div>
+                        <label>Fecha Compra</label>
+                        <input type="date" id="fechaCompraProducto" />
+                    </div>
+                </div>
+
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-primary" id="btnAgregarProducto" style="flex: 2;">➕ Agregar</button>
+                    <button class="btn-secondary" id="btnCancelarEdicion" style="flex: 1; display: none;">❌ Cancelar</button>
                 </div>
             </div>
 
-            <!-- PESTAÑA PRODUCTOS -->
-            <div class="tab-content active" id="tab-productos">
-                <div class="form-card">
-                    <h2 id="formTitle">➕ Agregar Producto</h2>
-                    <input type="hidden" id="editandoId" value="" />
-                    <input type="text" id="nombreProducto" placeholder="Nombre del producto" autocomplete="off" />
-                    <input type="number" id="precioProducto" placeholder="Precio" step="0.01" min="0" />
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn-primary" id="btnAgregarProducto" style="flex: 2;">➕ Agregar</button>
-                        <button class="btn-secondary" id="btnCancelarEdicion" style="flex: 1; display: none;">❌ Cancelar</button>
-                    </div>
-                </div>
+            <div class="search-bar">
+                <input type="text" id="buscarProducto" placeholder="🔍 Buscar producto por nombre..." autocomplete="off" />
+                <button class="btn-icon" id="btnLimpiarBusqueda" title="Limpiar búsqueda">✕</button>
+            </div>
 
-                <div class="search-bar">
-                    <input type="text" id="buscarProducto" placeholder="🔍 Buscar producto por nombre..." autocomplete="off" />
-                    <button class="btn-icon" id="btnLimpiarBusqueda" title="Limpiar búsqueda">✕</button>
-                </div>
-
-                <div class="list-header">
-                    <h2>📋 Lista de Productos (<span id="cantidadProductos">0</span>)</h2>
-                    <div style="display: flex; gap: 5px;">
-                        <button class="btn-icon" id="btnExportarProductos" title="Exportar productos">📤</button>
-                        <button class="btn-icon" id="btnEliminarTodosProductos" title="Eliminar todos">🗑️</button>
-                    </div>
-                </div>
-
-                <div class="lista-productos" id="listaProductos">
-                    <div class="empty-state">No hay productos. Agrega uno arriba 👆</div>
+            <div class="list-header">
+                <h2>📋 Lista de Productos (<span id="cantidadProductos">0</span>)</h2>
+                <div style="display: flex; gap: 5px;">
+                    <button class="btn-icon" id="btnExportarProductos" title="Exportar productos">📤</button>
+                    <button class="btn-icon" id="btnEliminarTodosProductos" title="Eliminar todos">🗑️</button>
                 </div>
             </div>
 
-            <!-- PESTAÑA VENDER -->
-            <div class="tab-content" id="tab-venta">
-                <div class="venta-container">
-                    <div class="selector-producto">
-                        <label>Seleccionar producto:</label>
-                        <select id="selectProductoVenta">
-                            <option value="">-- Agrega productos primero --</option>
-                        </select>
-                    </div>
-
-                    <div class="cantidad-precio">
-                        <div>
-                            <label>Cantidad:</label>
-                            <input type="number" id="cantidadVenta" value="1" min="1" />
-                        </div>
-                        <div>
-                            <label>Precio Unit.:</label>
-                            <span id="precioUnitarioMostrar">$0.00</span>
-                        </div>
-                    </div>
-
-                    <button class="btn-primary btn-large" id="btnAgregarAlCarrito">🛒 Agregar al Carrito</button>
-
-                    <div class="carrito-section">
-                        <h3>🛍️ Carrito Actual</h3>
-                        <div class="carrito-items" id="carritoItems">
-                            <div class="empty-state">Carrito vacío</div>
-                        </div>
-                        <div class="carrito-total">
-                            <strong>Total:</strong>
-                            <span id="totalCarrito">$0.00</span>
-                        </div>
-                        <button class="btn-success btn-large" id="btnFinalizarVenta">✅ Finalizar Venta</button>
-                        <button class="btn-secondary btn-large" id="btnVaciarCarrito" style="margin-top: 5px;">🗑️ Vaciar Carrito</button>
-                    </div>
-                </div>
+            <div class="lista-productos" id="listaProductos">
+                <div class="empty-state">No hay productos. Agrega uno arriba 👆</div>
             </div>
+        </div>
 
-            <!-- PESTAÑA HISTORIAL -->
-            <div class="tab-content" id="tab-historial">
-                <div class="historial-header">
-                    <h2>📅 Ventas Realizadas</h2>
-                    <div style="display: flex; gap: 5px;">
-                        <button class="btn-icon" id="btnExportarHistorial" title="Exportar historial">📤</button>
-                        <button class="btn-icon" id="btnLimpiarHistorial" title="Limpiar historial">🗑️</button>
+        <!-- PESTAÑA VENDER -->
+        <div class="tab-content" id="tab-venta">
+            <div class="venta-container">
+                <div class="selector-producto">
+                    <label>Seleccionar producto:</label>
+                    
+                    <!-- Buscador para ventas -->
+                    <div class="search-bar" style="margin-bottom: 5px;">
+                        <input type="text" id="buscarProductoVenta" placeholder="🔍 Buscar producto..." autocomplete="off" />
+                        <button class="btn-icon" id="btnLimpiarBusquedaVenta" title="Limpiar">✕</button>
+                    </div>
+                    
+                    <!-- Lista de productos seleccionable -->
+                    <div class="lista-productos-venta" id="listaProductosVenta">
+                        <div class="empty-state">No hay productos disponibles</div>
+                    </div>
+                    
+                    <!-- Producto seleccionado -->
+                    <div id="productoSeleccionadoInfo" style="display: none; margin-top: 10px;">
+                        <div style="background: #e8f5e9; padding: 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <strong>Seleccionado:</strong> <span id="nombreProductoSeleccionado"></span><br>
+                                <small>Precio: <span id="precioProductoSeleccionado"></span> | Stock: <span id="stockProductoSeleccionado"></span></small>
+                            </div>
+                            <button class="btn-icon" id="btnDeseleccionarProducto" title="Quitar selección">✕</button>
+                        </div>
+                    </div>
+                    
+                    <!-- ID del producto seleccionado (oculto) -->
+                    <input type="hidden" id="selectProductoVenta" value="" />
+                </div>
+
+                <div class="cantidad-precio">
+                    <div>
+                        <label>Cantidad:</label>
+                        <input type="number" id="cantidadVenta" value="1" min="1" />
+                    </div>
+                    <div>
+                        <label>Precio Unit.:</label>
+                        <span id="precioUnitarioMostrar">$0.00</span>
                     </div>
                 </div>
 
-                <div class="filtros-container">
-                    <div class="filtro-fecha">
-                        <input type="date" id="filtroFecha" />
-                        <button class="btn-secondary" id="btnFiltrarFecha">Filtrar día</button>
-                    </div>
-                    <div class="filtro-mes">
-                        <select id="filtroMes">
-                            <option value="">Todos los meses</option>
-                            <option value="0">Enero</option>
-                            <option value="1">Febrero</option>
-                            <option value="2">Marzo</option>
-                            <option value="3">Abril</option>
-                            <option value="4">Mayo</option>
-                            <option value="5">Junio</option>
-                            <option value="6">Julio</option>
-                            <option value="7">Agosto</option>
-                            <option value="8">Septiembre</option>
-                            <option value="9">Octubre</option>
-                            <option value="10">Noviembre</option>
-                            <option value="11">Diciembre</option>
-                        </select>
-                        <select id="filtroAnio">
-                            <option value="">Todos los años</option>
-                        </select>
-                        <button class="btn-secondary" id="btnFiltrarMes">Filtrar</button>
-                        <button class="btn-secondary" id="btnResetFiltro">✕</button>
-                    </div>
-                </div>
+                <button class="btn-primary btn-large" id="btnAgregarAlCarrito">🛒 Agregar al Carrito</button>
 
-                <div class="historial-list" id="historialList">
-                    <div class="empty-state">No hay ventas registradas</div>
-                </div>
-
-                <div class="totales-container">
-                    <div class="total-dia">
-                        <strong>Total del día:</strong>
-                        <span id="totalDelDia">$0.00</span>
+                <div class="carrito-section">
+                    <h3>🛍️ Carrito Actual</h3>
+                    <div class="carrito-items" id="carritoItems">
+                        <div class="empty-state">Carrito vacío</div>
                     </div>
-                    <div class="total-mes">
-                        <strong>Total del mes:</strong>
-                        <span id="totalDelMes">$0.00</span>
+                    <div class="carrito-total">
+                        <strong>Total:</strong>
+                        <span id="totalCarrito">$0.00</span>
                     </div>
-                </div>
-            </div>
-
-            <!-- PESTAÑA ESTADÍSTICAS -->
-            <div class="tab-content" id="tab-estadisticas">
-                <h2 style="margin-bottom: 20px;">📊 Análisis de Ventas</h2>
-
-                <div class="stats-cards">
-                    <div class="stat-card">
-                        <span class="stat-label">Ventas Totales</span>
-                        <span class="stat-value" id="statsTotalVentas">$0.00</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-label">Promedio por Venta</span>
-                        <span class="stat-value" id="statsPromedio">$0.00</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-label">Mejor Día</span>
-                        <span class="stat-value" id="statsMejorDia">-</span>
-                    </div>
-                    <div class="stat-card">
-                        <span class="stat-label">Total Unidades</span>
-                        <span class="stat-value" id="statsTotalUnidades">0</span>
-                    </div>
-                </div>
-
-                <div class="chart-container">
-                    <h3>📈 Ventas últimos 7 días</h3>
-                    <canvas id="graficoSemanal"></canvas>
-                </div>
-
-                <div class="chart-container">
-                    <h3>🥧 Productos más vendidos</h3>
-                    <canvas id="graficoProductos"></canvas>
-                </div>
-
-                <div style="margin-top: 20px;">
-                    <button class="btn-primary" id="btnExportarEstadisticas">📥 Exportar Reporte Completo</button>
+                    <button class="btn-success btn-large" id="btnFinalizarVenta">✅ Finalizar Venta</button>
+                    <button class="btn-secondary btn-large" id="btnVaciarCarrito" style="margin-top: 5px;">🗑️ Vaciar Carrito</button>
                 </div>
             </div>
         </div>
-   
+
+        <!-- PESTAÑA HISTORIAL -->
+        <div class="tab-content" id="tab-historial">
+            <div class="historial-header">
+                <h2>📅 Ventas Realizadas</h2>
+                <div style="display: flex; gap: 5px;">
+                    <button class="btn-icon" id="btnExportarHistorial" title="Exportar historial">📤</button>
+                    <button class="btn-icon" id="btnLimpiarHistorial" title="Limpiar historial">🗑️</button>
+                </div>
+            </div>
+
+            <div class="filtros-container">
+                <div class="filtro-fecha">
+                    <input type="date" id="filtroFecha" />
+                    <button class="btn-secondary" id="btnFiltrarFecha">Filtrar día</button>
+                </div>
+                <div class="filtro-mes">
+                    <select id="filtroMes">
+                        <option value="">Todos los meses</option>
+                        <option value="0">Enero</option>
+                        <option value="1">Febrero</option>
+                        <option value="2">Marzo</option>
+                        <option value="3">Abril</option>
+                        <option value="4">Mayo</option>
+                        <option value="5">Junio</option>
+                        <option value="6">Julio</option>
+                        <option value="7">Agosto</option>
+                        <option value="8">Septiembre</option>
+                        <option value="9">Octubre</option>
+                        <option value="10">Noviembre</option>
+                        <option value="11">Diciembre</option>
+                    </select>
+                    <select id="filtroAnio">
+                        <option value="">Todos los años</option>
+                    </select>
+                    <button class="btn-secondary" id="btnFiltrarMes">Filtrar</button>
+                    <button class="btn-secondary" id="btnResetFiltro">✕</button>
+                </div>
+            </div>
+
+            <div class="historial-list" id="historialList">
+                <div class="empty-state">No hay ventas registradas</div>
+            </div>
+
+            <div class="totales-container">
+                <div class="total-dia">
+                    <strong>Total del día:</strong>
+                    <span id="totalDelDia">$0.00</span>
+                </div>
+                <div class="total-mes">
+                    <strong>Total del mes:</strong>
+                    <span id="totalDelMes">$0.00</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PESTAÑA ESTADÍSTICAS -->
+        <div class="tab-content" id="tab-estadisticas">
+            <h2 style="margin-bottom: 20px;">📊 Análisis de Ventas</h2>
+
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <span class="stat-label">Ventas Totales</span>
+                    <span class="stat-value" id="statsTotalVentas">$0.00</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Promedio por Venta</span>
+                    <span class="stat-value" id="statsPromedio">$0.00</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Mejor Día</span>
+                    <span class="stat-value" id="statsMejorDia">-</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-label">Total Unidades</span>
+                    <span class="stat-value" id="statsTotalUnidades">0</span>
+                </div>
+            </div>
+
+            <div class="chart-container">
+                <h3>📈 Ventas últimos 7 días</h3>
+                <canvas id="graficoSemanal"></canvas>
+            </div>
+
+            <div class="chart-container">
+                <h3>🥧 Productos más vendidos</h3>
+                <canvas id="graficoProductos"></canvas>
+            </div>
+
+            <div style="margin-top: 20px;">
+                <button class="btn-primary" id="btnExportarEstadisticas">📥 Exportar Reporte Completo</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL PARA EXPORTAR DATOS (cuando no se puede descargar) -->
+    <div id="modalExportar" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
+        <div style="background: white; padding: 20px; border-radius: 20px; width: 90%; max-width: 500px; max-height: 80%; overflow-y: auto;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h3 id="modalTitulo" style="margin: 0;">📤 Datos Exportados</h3>
+                <button id="btnCerrarModal" style="background: #fee2e2; color: #dc2626; border: none; padding: 8px 15px; border-radius: 10px; font-size: 16px; cursor: pointer;">✕ Cerrar</button>
+            </div>
+            <p style="font-size: 13px; color: #666; margin-bottom: 10px;">📋 Los datos se han copiado al portapapeles automáticamente.</p>
+            <textarea id="modalContenido" readonly style="width: 100%; height: 200px; padding: 10px; border: 2px solid #e0e0e0; border-radius: 10px; font-family: monospace; font-size: 13px; resize: vertical;"></textarea>
+            <div style="display: flex; gap: 10px; margin-top: 10px;">
+                <button id="btnCopiarModal" class="btn-primary" style="flex: 1;">📋 Copiar</button>
+                <button id="btnCompartirModal" class="btn-success" style="flex: 1;">📤 Compartir</button>
+            </div>
+        </div>
+    </div>
 
     <!-- Registrar Service Worker -->
     <script>
