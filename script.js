@@ -511,6 +511,7 @@ btnFinalizar.addEventListener('click', () => {
     alert(`✅ Venta registrada\nTotal: $${total.toFixed(2)}`);
     document.querySelector('[data-tab="historial"]').click();
 });
+
 // ==================== HISTORIAL ====================
 const historialListDiv = document.getElementById('historialList');
 const totalDelDiaSpan = document.getElementById('totalDelDia');
@@ -634,8 +635,9 @@ function actualizarEstadisticas() {
     const ctxProd = document.getElementById('graficoProductos').getContext('2d');
     if (graficoProductosInstancia) graficoProductosInstancia.destroy();
     graficoProductosInstancia = new Chart(ctxProd, { type: 'doughnut', data: { labels: top.map(t => t[0]), datasets: [{ data: top.map(t => t[1]), backgroundColor: ['#0f3460','#10b981','#e94560','#f59e0b','#8b5cf6'] }] } });
-                }
-     // ==================== EXPORTACIÓN INTELIGENTE ====================
+}
+
+// ==================== EXPORTACIÓN INTELIGENTE ====================
 function exportarTipo(datosFormateados, nombreArchivo, titulo) {
     const claves = Object.keys(datosFormateados[0]);
     let texto = claves.join('\t') + '\n';
@@ -732,6 +734,7 @@ document.getElementById('btnExportarEstadisticas').addEventListener('click', () 
     }));
     exportarTipo(datos, `reporte_${new Date().toISOString().split('T')[0]}`, 'Reporte Completo');
 });
+
 // ==================== ACTUALIZAR TODO ====================
 function actualizarTodo() {
     guardarProductos();
@@ -741,6 +744,5 @@ function actualizarTodo() {
 
 // ==================== INICIALIZAR ====================
 cargarDatos();
-```
 
         
