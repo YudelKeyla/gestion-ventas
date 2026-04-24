@@ -76,7 +76,7 @@ let productosFiltrados = [];
 let graficoSemanalInstancia = null;
 let graficoProductosInstancia = null;
 let ventanaCerrandose = false;
-let productoSeleccionadoId = null;  // Para el buscador en ventas
+let productoSeleccionadoId = null;
 let datosParaCompartir = '';
 let tituloParaCompartir = '';
 
@@ -85,7 +85,6 @@ function cargarDatos() {
     const histGuardados = localStorage.getItem('historialVentas');
     if (prodGuardados) productos = JSON.parse(prodGuardados);
     if (histGuardados) historialVentas = JSON.parse(histGuardados);
-    // Compatibilidad: si un producto no tiene precioCosto, asignar 0
     productos.forEach(p => {
         if (p.precioCosto === undefined) p.precioCosto = 0;
         if (p.stock === undefined) p.stock = 0;
@@ -148,7 +147,6 @@ const buscarInput = document.getElementById('buscarProducto');
 const btnLimpiarBusqueda = document.getElementById('btnLimpiarBusqueda');
 const cantidadProductosSpan = document.getElementById('cantidadProductos');
 
-// Referencias a los elementos de búsqueda en ventas
 const buscarProductoVenta = document.getElementById('buscarProductoVenta');
 const btnLimpiarBusquedaVenta = document.getElementById('btnLimpiarBusquedaVenta');
 const listaProductosVenta = document.getElementById('listaProductosVenta');
@@ -162,8 +160,6 @@ btnAgregar.addEventListener('click', guardarProducto);
 btnCancelarEdicion.addEventListener('click', cancelarEdicion);
 buscarInput.addEventListener('input', filtrarProductos);
 btnLimpiarBusqueda.addEventListener('click', () => { buscarInput.value = ''; filtrarProductos(); });
-buscarProductoVenta.addEventListener('input', () => actualizarInterfazVenta(buscarProductoVenta.value));
-btnLimpiarBusquedaVenta.addEventListener('click', () => { buscarProductoVenta.value = ''; actualizarInterfazVenta(); });
 btnDeseleccionarProducto.addEventListener('click', deseleccionarProducto);
 
 function guardarProducto() {
@@ -194,7 +190,6 @@ function guardarProducto() {
         }
         cancelarEdicion();
     } else {
-        // Verificar duplicado
         const duplicado = productos.find(p => p.nombre.toLowerCase() === nombre.toLowerCase());
         if (duplicado) {
             if (duplicado.precio === precioVenta && duplicado.precioCosto === precioCosto) {
@@ -306,32 +301,43 @@ function actualizarListaProductos() {
     }).join('');
 }
 
-// ==================== INTERFAZ DE VENTA (BÚSQUEDA Y LISTA) ====================
-function actualizarInterfazVenta(termino = '') {
+// ==================== SELECTOR DE PRODUCTO PARA VENTA (MODAL) ====================
+function abrirModalProductoVenta() {
+    document.getElementById('modalProductoVenta').style.display = 'flex';
+    actualizarListaModalProductos();
+    document.getElementById('buscarProductoVenta').focus();
+}
+
+function cerrarModalProductoVenta() {
+    document.getElementById('modalProductoVenta').style.display = 'none';
+}
+
+function actualizarListaModalProductos(termino = '') {
     const term = termino.trim().toLowerCase();
-    let productosFiltradosVenta = productos;
+    const btnLimpiar = document.getElementById('btnLimpiarBusquedaVenta');
+    let productosFiltrados = productos;
+    
     if (term) {
-        productosFiltradosVenta = productos.filter(p => p.nombre.toLowerCase().includes(term));
-        btnLimpiarBusquedaVenta.style.display = 'flex';
+        productosFiltrados = productos.filter(p => p.nombre.toLowerCase().includes(term));
+        btnLimpiar.style.display = 'flex';
     } else {
-        btnLimpiarBusquedaVenta.style.display = 'none';
+        btnLimpiar.style.display = 'none';
     }
     
     if (productos.length === 0) {
         listaProductosVenta.innerHTML = '<div class="empty-state">No hay productos. Agrégalos primero 👆</div>';
         return;
     }
-    if (productosFiltradosVenta.length === 0) {
+    if (productosFiltrados.length === 0) {
         listaProductosVenta.innerHTML = `<div class="no-results">🔍 Sin resultados para "${term}"</div>`;
         return;
     }
     
-    listaProductosVenta.innerHTML = productosFiltradosVenta.map(p => {
+    listaProductosVenta.innerHTML = productosFiltrados.map(p => {
         const agotado = (p.stock || 0) === 0;
         const seleccionado = productoSeleccionadoId === p.id;
         const stockBajo = (p.stock || 0) <= 3 && !agotado;
-        return `<div class="producto-venta-item ${seleccionado ? 'seleccionado' : ''} ${agotado ? 'agotado' : ''}" 
-                  onclick="seleccionarProductoVenta(${p.id})">
+        return `<div class="producto-venta-item ${seleccionado ? 'seleccionado' : ''} ${agotado ? 'agotado' : ''}" onclick="seleccionarProductoDesdeModal(${p.id})">
             <div class="producto-venta-nombre">${seleccionado ? '✅ ' : ''}${p.nombre}</div>
             <div class="producto-venta-info">
                 <div class="producto-venta-precio">$${p.precio.toFixed(2)}</div>
@@ -341,6 +347,24 @@ function actualizarInterfazVenta(termino = '') {
     }).join('');
 }
 
+function seleccionarProductoDesdeModal(id) {
+    seleccionarProductoVenta(id);
+    cerrarModalProductoVenta();
+}
+
+document.getElementById('btnCerrarModalProducto').addEventListener('click', cerrarModalProductoVenta);
+document.getElementById('buscarProductoVenta').addEventListener('input', function(e) {
+    actualizarListaModalProductos(e.target.value);
+});
+document.getElementById('btnLimpiarBusquedaVenta').addEventListener('click', function() {
+    document.getElementById('buscarProductoVenta').value = '';
+    actualizarListaModalProductos();
+    document.getElementById('buscarProductoVenta').focus();
+});
+document.getElementById('modalProductoVenta').addEventListener('click', function(e) {
+    if (e.target === this) cerrarModalProductoVenta();
+});
+
 function seleccionarProductoVenta(id) {
     const producto = productos.find(p => p.id === id);
     if (!producto || (producto.stock || 0) === 0) return;
@@ -349,12 +373,14 @@ function seleccionarProductoVenta(id) {
     selectProductoVentaHidden.value = id;
     precioUnitarioSpan.textContent = `$${producto.precio.toFixed(2)}`;
     
+    document.getElementById('textoSeleccionProducto').textContent = producto.nombre;
+    document.getElementById('precioSeleccionVisual').textContent = `$${producto.precio.toFixed(2)}`;
+    document.getElementById('btnQuitarSeleccionVisual').style.display = 'block';
+    productoSeleccionadoInfo.style.display = 'block';
+    
     nombreProductoSeleccionado.textContent = producto.nombre;
     precioProductoSeleccionado.textContent = `$${producto.precio.toFixed(2)}`;
     stockProductoSeleccionado.textContent = producto.stock || 0;
-    productoSeleccionadoInfo.style.display = 'block';
-    
-    actualizarInterfazVenta(buscarProductoVenta.value);
 }
 
 function deseleccionarProducto() {
@@ -362,7 +388,15 @@ function deseleccionarProducto() {
     selectProductoVentaHidden.value = '';
     productoSeleccionadoInfo.style.display = 'none';
     precioUnitarioSpan.textContent = '$0.00';
-    actualizarInterfazVenta(buscarProductoVenta.value);
+    
+    document.getElementById('textoSeleccionProducto').textContent = 'Toca para seleccionar un producto...';
+    document.getElementById('precioSeleccionVisual').textContent = '';
+    document.getElementById('btnQuitarSeleccionVisual').style.display = 'none';
+}
+
+function actualizarInterfazVenta() {
+    // Esta función queda de respaldo, pero ya no se usa directamente
+    actualizarListaModalProductos();
 }
 
 // ==================== CARRITO Y VENTAS ====================
@@ -388,7 +422,6 @@ function agregarAlCarrito() {
         return;
     }
     
-    // Descontar del inventario
     producto.stock -= cantidad;
     guardarProductos();
     
@@ -478,12 +511,11 @@ btnFinalizar.addEventListener('click', () => {
     alert(`✅ Venta registrada\nTotal: $${total.toFixed(2)}`);
     document.querySelector('[data-tab="historial"]').click();
 });
-
 // ==================== HISTORIAL ====================
 const historialListDiv = document.getElementById('historialList');
 const totalDelDiaSpan = document.getElementById('totalDelDia');
-const totalDelMesSpan = document.getElementById('totalDelMes');
 const gananciaDelDiaSpan = document.getElementById('gananciaDelDia');
+const totalDelMesSpan = document.getElementById('totalDelMes');
 const gananciaDelMesSpan = document.getElementById('gananciaDelMes');
 const filtroFecha = document.getElementById('filtroFecha');
 const filtroMes = document.getElementById('filtroMes');
@@ -518,11 +550,9 @@ function actualizarTotalDelDia() {
     const hoy = new Date().toLocaleDateString('es-ES');
     const ventasHoy = historialVentas.filter(v => new Date(v.fecha).toLocaleDateString('es-ES') === hoy);
     
-    // Calcular venta total del día
     const totalVenta = ventasHoy.reduce((s, v) => s + v.total, 0);
     totalDelDiaSpan.textContent = `$${totalVenta.toFixed(2)}`;
     
-    // Calcular ganancia total del día
     const totalGanancia = ventasHoy.reduce((s, v) => {
         const gananciaVenta = v.productos.reduce((sum, p) => sum + ((p.precio - (p.precioCosto || 0)) * p.cantidad), 0);
         return s + gananciaVenta;
@@ -537,11 +567,9 @@ function actualizarTotalDelMes() {
         return f.getMonth() === ahora.getMonth() && f.getFullYear() === ahora.getFullYear();
     });
     
-    // Calcular venta total del mes
     const totalVenta = ventasMes.reduce((s, v) => s + v.total, 0);
     totalDelMesSpan.textContent = `$${totalVenta.toFixed(2)}`;
     
-    // Calcular ganancia total del mes
     const totalGanancia = ventasMes.reduce((s, v) => {
         const gananciaVenta = v.productos.reduce((sum, p) => sum + ((p.precio - (p.precioCosto || 0)) * p.cantidad), 0);
         return s + gananciaVenta;
@@ -589,7 +617,6 @@ function actualizarEstadisticas() {
     document.getElementById('statsMejorDia').textContent = mejorDia ? `${mejorDia[0]} ($${mejorDia[1].toFixed(2)})` : '-';
     document.getElementById('statsTotalUnidades').textContent = totalUnidades;
 
-    // Gráfico semanal
     const ultimos7Dias = [];
     for (let i = 6; i >= 0; i--) {
         const fecha = new Date(); fecha.setDate(fecha.getDate() - i);
@@ -601,18 +628,15 @@ function actualizarEstadisticas() {
     if (graficoSemanalInstancia) graficoSemanalInstancia.destroy();
     graficoSemanalInstancia = new Chart(ctxSemanal, { type: 'bar', data: { labels: ultimos7Dias.map(d => d.fecha), datasets: [{ label: 'Ventas ($)', data: ultimos7Dias.map(d => d.total), backgroundColor: '#0f3460', borderRadius: 8 }] }, options: { responsive: true, plugins: { legend: { display: false } } } });
 
-    // Gráfico productos
     const productosVendidos = {};
     historialVentas.forEach(v => v.productos.forEach(p => productosVendidos[p.nombre] = (productosVendidos[p.nombre] || 0) + p.cantidad));
     const top = Object.entries(productosVendidos).sort((a,b) => b[1] - a[1]).slice(0,5);
     const ctxProd = document.getElementById('graficoProductos').getContext('2d');
     if (graficoProductosInstancia) graficoProductosInstancia.destroy();
     graficoProductosInstancia = new Chart(ctxProd, { type: 'doughnut', data: { labels: top.map(t => t[0]), datasets: [{ data: top.map(t => t[1]), backgroundColor: ['#0f3460','#10b981','#e94560','#f59e0b','#8b5cf6'] }] } });
-}
-
-// ==================== EXPORTACIÓN INTELIGENTE (descarga o modal) ====================
+                }
+     // ==================== EXPORTACIÓN INTELIGENTE ====================
 function exportarTipo(datosFormateados, nombreArchivo, titulo) {
-    // Generar texto tabulado
     const claves = Object.keys(datosFormateados[0]);
     let texto = claves.join('\t') + '\n';
     texto += datosFormateados.map(fila => claves.map(k => fila[k] || '').join('\t')).join('\n');
@@ -620,7 +644,6 @@ function exportarTipo(datosFormateados, nombreArchivo, titulo) {
     datosParaCompartir = texto;
     tituloParaCompartir = nombreArchivo;
     
-    // Intentar descarga directa
     const blob = new Blob([texto], { type: 'text/tab-separated-values' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -631,7 +654,6 @@ function exportarTipo(datosFormateados, nombreArchivo, titulo) {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     
-    // Mostrar modal (por si no se descargó en WebView)
     setTimeout(() => {
         document.getElementById('modalTitulo').textContent = '📤 ' + titulo;
         document.getElementById('modalContenido').value = texto;
@@ -676,7 +698,6 @@ document.getElementById('modalExportar').addEventListener('click', function(e) {
     if (e.target === this) this.style.display = 'none';
 });
 
-// Funciones de exportación específicas
 document.getElementById('btnExportarProductos').addEventListener('click', () => {
     if (productos.length === 0) { alert('No hay productos'); return; }
     const datos = productos.map(p => ({
@@ -711,17 +732,15 @@ document.getElementById('btnExportarEstadisticas').addEventListener('click', () 
     }));
     exportarTipo(datos, `reporte_${new Date().toISOString().split('T')[0]}`, 'Reporte Completo');
 });
-
-// ==================== RESPALDO Y RESTAURACIÓN (incluido automáticamente en exportar) ====================
-// Se puede agregar un botón extra en el HTML si se desea, pero las funciones de exportación ya cubren el respaldo.
-
 // ==================== ACTUALIZAR TODO ====================
 function actualizarTodo() {
     guardarProductos();
     filtrarProductos();
-    actualizarInterfazVenta(buscarProductoVenta.value);
+    actualizarInterfazVenta();
 }
 
 // ==================== INICIALIZAR ====================
 cargarDatos();
+```
 
+        
