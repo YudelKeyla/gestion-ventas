@@ -804,6 +804,7 @@ function restaurarDatos(event) {
     lector.readAsText(archivo);
     event.target.value = '';
 }
+
 // ==================== INICIALIZAR ====================
 cargarDatos();
 
