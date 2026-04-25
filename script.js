@@ -70,6 +70,25 @@ pinInput.addEventListener('input', () => {
 
 btnIngresar.addEventListener('click', validarPIN);
 verificarSesion();
+document.getElementById('btnOlvidePIN').addEventListener('click', mostrarPista);
+document.getElementById('btnCerrarPista').addEventListener('click', ocultarPista);
+
+function mostrarPista() {
+    const pista = localStorage.getItem('pin_hint');
+    const pistaTexto = document.getElementById('pistaTexto');
+    const contenedor = document.getElementById('pistaContainer');
+    
+    if (pista && pista.trim() !== '') {
+        pistaTexto.textContent = pista;
+    } else {
+        pistaTexto.textContent = 'No hay pista configurada. Contacta al desarrollador.';
+    }
+    contenedor.style.display = 'block';
+}
+
+function ocultarPista() {
+    document.getElementById('pistaContainer').style.display = 'none';
+}
 
 // ==================== DATOS Y ALMACENAMIENTO ====================
 let productos = [];
@@ -886,23 +905,5 @@ document.getElementById('btnEliminarTodosProductos').addEventListener('click', (
     }
 });
 
-document.getElementById('btnOlvidePIN').addEventListener('click', mostrarPista);
-document.getElementById('btnCerrarPista').addEventListener('click', ocultarPista);
 
-function mostrarPista() {
-    const pista = localStorage.getItem('pin_hint');
-    const pistaTexto = document.getElementById('pistaTexto');
-    const contenedor = document.getElementById('pistaContainer');
-    
-    if (pista && pista.trim() !== '') {
-        pistaTexto.textContent = pista;
-    } else {
-        pistaTexto.textContent = 'No hay pista configurada. Contacta al desarrollador.';
-    }
-    contenedor.style.display = 'block';
-}
-
-function ocultarPista() {
-    document.getElementById('pistaContainer').style.display = 'none';
-}
         
