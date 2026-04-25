@@ -791,6 +791,7 @@ function actualizarTodo() {
     guardarProductos();
     filtrarProductos();
     actualizarInterfazVenta();
+    actualizarResumenFinanzas();
 }
 // ==================== RESPALDO Y RESTAURACIÓN ====================
 document.getElementById('btnRespaldar').addEventListener('click', respaldarDatos);
@@ -844,6 +845,7 @@ function restaurarDatos(event) {
                 actualizarInterfazVenta();
                 actualizarHistorial();
                 llenarSelectAnios();
+                actualizarResumenFinanzas();
                 alert(`✅ Datos restaurados exitosamente.\nProductos: ${productos.length}\nVentas: ${historialVentas.length}`);
             } else {
                 alert('❌ El archivo no es válido.');
