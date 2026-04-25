@@ -29,7 +29,7 @@ function validarPIN() {
     
     if (pinIngresado === PIN_CORRECTO) {
         mostrarApp();
-        pinError.style.display = 'none';
+        pinError.style.display = 'block';
         intentosFallidos = 0;
     } else {
         intentosFallidos++;
