@@ -136,6 +136,7 @@ function cargarDatos() {
     actualizarInterfazVenta();
     actualizarHistorial();
     llenarSelectAnios();
+    cargarMovimientosCaja(); // ← agrega esta línea
 }
 
 function guardarProductos() {
