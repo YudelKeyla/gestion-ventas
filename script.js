@@ -745,4 +745,18 @@ function actualizarTodo() {
 // ==================== INICIALIZAR ====================
 cargarDatos();
 
+// ==================== CORRECCIÓN: Eliminar todos los productos ====================
+// Se reemplazó la llamada a 'actualizarSelectProductos()' por 'actualizarListaProductos()'
+// para que la lista se refresque correctamente.
+document.getElementById('btnEliminarTodosProductos').addEventListener('click', () => {
+    if (productos.length > 0 && confirm('¿Eliminar TODOS los productos?')) {
+        productos = [];
+        guardarProductos();
+        cancelarEdicion();
+        filtrarProductos();
+        actualizarListaProductos(); // ← CORRECCIÓN AQUÍ
+        actualizarInterfazVenta();   // para que también se actualice la pestaña de ventas
+    }
+});
+
         
