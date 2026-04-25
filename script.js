@@ -108,6 +108,7 @@ verificarSesion();
     }
 })();
 
+
 // ==================== DATOS Y ALMACENAMIENTO ====================
 let productos = [];
 let carrito = [];
@@ -905,6 +906,141 @@ function cambiarPIN() {
     cerrarModalCambioPIN();
     alert('✅ PIN cambiado exitosamente.');
 }
+
+// ==================== FINANZAS ====================
+let movimientosCaja = [];
+
+// Cargar movimientos guardados
+function cargarMovimientosCaja() {
+    const movs = localStorage.getItem('movimientosCaja');
+    if (movs) movimientosCaja = JSON.parse(movs);
+    actualizarListaMovimientos();
+    actualizarResumenFinanzas();
+}
+
+function guardarMovimientosCaja() {
+    localStorage.setItem('movimientosCaja', JSON.stringify(movimientosCaja));
+}
+
+function agregarMovimientoCaja(tipo, monto, fecha, motivo) {
+    movimientosCaja.push({
+        id: Date.now(),
+        tipo,
+        monto: parseFloat(monto),
+        fecha: fecha || new Date().toISOString().split('T')[0],
+        motivo: motivo.trim()
+    });
+    guardarMovimientosCaja();
+    actualizarListaMovimientos();
+    actualizarResumenFinanzas();
+}
+
+function eliminarMovimientoCaja(id) {
+    if (!confirm('¿Eliminar este movimiento?')) return;
+    movimientosCaja = movimientosCaja.filter(m => m.id !== id);
+    guardarMovimientosCaja();
+    actualizarListaMovimientos();
+    actualizarResumenFinanzas();
+}
+
+function actualizarListaMovimientos() {
+    const lista = document.getElementById('listaMovimientos');
+    if (!lista) return;
+    
+    if (movimientosCaja.length === 0) {
+        lista.innerHTML = '<div class="empty-state">No hay movimientos registrados</div>';
+        return;
+    }
+    
+    // Ordenar por fecha descendente
+    movimientosCaja.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+    
+    lista.innerHTML = movimientosCaja.map(m => {
+        const esInyeccion = m.tipo === 'inyeccion';
+        const claseTipo = esInyeccion ? 'inyeccion' : 'extraccion';
+        const signo = esInyeccion ? '+' : '-';
+        const claseMonto = esInyeccion ? 'positivo' : 'negativo';
+        return `
+        <div class="movimiento-item ${claseTipo}">
+            <div class="movimiento-info">
+                <span class="movimiento-tipo">${esInyeccion ? '💉 Inyección' : '💸 Extracción'}</span>
+                <span class="movimiento-fecha">📅 ${new Date(m.fecha + 'T00:00:00').toLocaleDateString('es-ES', { day:'2-digit', month:'2-digit', year:'numeric' })}</span>
+                <span class="movimiento-motivo">${m.motivo || 'Sin motivo'}</span>
+            </div>
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="movimiento-monto ${claseMonto}">${signo}$${m.monto.toFixed(2)}</span>
+                <button class="btn-quitar" onclick="eliminarMovimientoCaja(${m.id})">🗑️</button>
+            </div>
+        </div>`;
+    }).join('');
+}
+
+function actualizarResumenFinanzas() {
+    // Calcular valor del inventario (costo * stock actual)
+    const invCosto = productos.reduce((sum, p) => sum + (p.precioCosto * (p.stock || 0)), 0);
+    
+    // Calcular ganancia neta de todas las ventas
+    const gananciaVentas = historialVentas.reduce((sum, v) => {
+        return sum + v.productos.reduce((s, p) => s + ((p.precio - (p.precioCosto || 0)) * p.cantidad), 0);
+    }, 0);
+    
+    // Sumar inyecciones y extracciones
+    const inyecciones = movimientosCaja
+        .filter(m => m.tipo === 'inyeccion')
+        .reduce((sum, m) => sum + m.monto, 0);
+    const extracciones = movimientosCaja
+        .filter(m => m.tipo === 'extraccion')
+        .reduce((sum, m) => sum + m.monto, 0);
+    
+    // Caja = (ganancias acumuladas) + inyecciones - extracciones
+    const caja = gananciaVentas + inyecciones - extracciones;
+    
+    // Patrimonio total = valor inventario + caja
+    const patrimonio = invCosto + caja;
+    
+    // Actualizar las tarjetas
+    document.getElementById('finInvCosto').textContent = `$${invCosto.toFixed(2)}`;
+    document.getElementById('finGananciaVentas').textContent = `$${gananciaVentas.toFixed(2)}`;
+    document.getElementById('finCaja').textContent = `$${caja.toFixed(2)}`;
+    document.getElementById('finPatrimonio').textContent = `$${patrimonio.toFixed(2)}`;
+}
+
+// Eventos
+document.getElementById('btnAgregarMovimiento')?.addEventListener('click', () => {
+    const tipo = document.getElementById('tipoMovimiento').value;
+    const monto = document.getElementById('montoMovimiento').value;
+    const fecha = document.getElementById('fechaMovimiento').value;
+    const motivo = document.getElementById('motivoMovimiento').value;
+    
+    if (!monto || isNaN(parseFloat(monto)) || parseFloat(monto) <= 0) {
+        alert('Ingresa un monto válido.');
+        return;
+    }
+    
+    agregarMovimientoCaja(tipo, monto, fecha, motivo);
+    document.getElementById('montoMovimiento').value = '';
+    document.getElementById('motivoMovimiento').value = '';
+    document.getElementById('fechaMovimiento').value = '';
+});
+
+document.getElementById('btnLimpiarMovimientos')?.addEventListener('click', () => {
+    if (movimientosCaja.length > 0 && confirm('¿Eliminar todo el historial de movimientos?')) {
+        movimientosCaja = [];
+        guardarMovimientosCaja();
+        actualizarListaMovimientos();
+        actualizarResumenFinanzas();
+    }
+});
+
+// Actualizar finanzas al cambiar a la pestaña finanzas
+document.querySelector('[data-tab="finanzas"]')?.addEventListener('click', () => {
+    actualizarResumenFinanzas();
+});
+
+// Añadir la carga al inicio
+document.addEventListener('DOMContentLoaded', () => {
+    cargarMovimientosCaja();
+});
 
 // ==================== INICIALIZAR ====================
 cargarDatos();
