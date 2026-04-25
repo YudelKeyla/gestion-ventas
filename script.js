@@ -741,7 +741,69 @@ function actualizarTodo() {
     filtrarProductos();
     actualizarInterfazVenta();
 }
+// ==================== RESPALDO Y RESTAURACIÓN ====================
+document.getElementById('btnRespaldar').addEventListener('click', respaldarDatos);
+document.getElementById('btnRestaurar').addEventListener('click', () => {
+    document.getElementById('inputRestaurar').click();
+});
+document.getElementById('inputRestaurar').addEventListener('change', restaurarDatos);
 
+function respaldarDatos() {
+    const datos = {
+        productos: productos,
+        historialVentas: historialVentas,
+        fechaRespaldo: new Date().toISOString(),
+        version: '3.0'
+    };
+    
+    const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `respaldo_ventas_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    alert('✅ Respaldo descargado. Guárdalo en un lugar seguro.');
+}
+
+function restaurarDatos(event) {
+    const archivo = event.target.files[0];
+    if (!archivo) return;
+    
+    if (!confirm('⚠️ Esto REEMPLAZARÁ todos tus datos actuales. ¿Continuar?')) {
+        event.target.value = '';
+        return;
+    }
+    
+    const lector = new FileReader();
+    lector.onload = function(e) {
+        try {
+            const datos = JSON.parse(e.target.result);
+            
+            if (datos.productos && datos.historialVentas) {
+                productos = datos.productos;
+                historialVentas = datos.historialVentas;
+                guardarProductos();
+                guardarHistorial();
+                productosFiltrados = [...productos];
+                actualizarListaProductos();
+                actualizarInterfazVenta();
+                actualizarHistorial();
+                llenarSelectAnios();
+                alert(`✅ Datos restaurados exitosamente.\nProductos: ${productos.length}\nVentas: ${historialVentas.length}`);
+            } else {
+                alert('❌ El archivo no es válido.');
+            }
+        } catch (error) {
+            alert('❌ Error al leer el archivo. Asegúrate de que sea un .json válido.');
+        }
+    };
+    lector.readAsText(archivo);
+    event.target.value = '';
+}
 // ==================== INICIALIZAR ====================
 cargarDatos();
 
