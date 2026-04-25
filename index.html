@@ -283,6 +283,57 @@
                 <button class="btn-primary" id="btnExportarEstadisticas">📥 Exportar Reporte Completo</button>
             </div>
         </div>
+
+        <!-- PESTAÑA FINANZAS -->
+<div class="tab-content" id="tab-finanzas">
+    <div class="finanzas-container">
+        <!-- Tarjetas de resumen -->
+        <div class="stats-cards">
+            <div class="stat-card">
+                <span class="stat-label">Inventario (Costo)</span>
+                <span class="stat-value" id="finInvCosto">$0.00</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Ganancia por Ventas</span>
+                <span class="stat-value" id="finGananciaVentas">$0.00</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Caja (Efectivo)</span>
+                <span class="stat-value" id="finCaja">$0.00</span>
+            </div>
+            <div class="stat-card">
+                <span class="stat-label">Patrimonio Total</span>
+                <span class="stat-value" id="finPatrimonio">$0.00</span>
+            </div>
+        </div>
+
+        <!-- Formulario de movimiento -->
+        <div class="form-card">
+            <h3>➕ Registrar Movimiento</h3>
+            <div class="input-row">
+                <select id="tipoMovimiento">
+                    <option value="inyeccion">💉 Inyección</option>
+                    <option value="extraccion">💸 Extracción</option>
+                </select>
+                <input type="number" id="montoMovimiento" placeholder="Monto $" step="0.01" min="0.01" />
+            </div>
+            <div class="input-row">
+                <input type="date" id="fechaMovimiento" />
+                <input type="text" id="motivoMovimiento" placeholder="Motivo (opcional)" />
+            </div>
+            <button class="btn-primary" id="btnAgregarMovimiento">✅ Registrar</button>
+        </div>
+
+        <!-- Historial de movimientos -->
+        <div class="list-header">
+            <h3>📋 Historial de Movimientos</h3>
+            <button class="btn-icon" id="btnLimpiarMovimientos" title="Limpiar todo">🗑️</button>
+        </div>
+        <div class="lista-movimientos" id="listaMovimientos">
+            <div class="empty-state">No hay movimientos registrados</div>
+        </div>
+    </div>
+</div>
    
 
     
