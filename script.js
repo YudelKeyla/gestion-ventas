@@ -5,11 +5,46 @@ function obtenerPIN() {
 
 let PIN_CORRECTO = obtenerPIN();
 let intentosFallidos = 0;
+
 const loginScreen = document.getElementById('loginScreen');
 const mainApp = document.getElementById('mainApp');
 const pinInput = document.getElementById('pinInput');
 const btnIngresar = document.getElementById('btnIngresar');
 const pinError = document.getElementById('pinError');
+
+// Verificar que los elementos esenciales existan
+if (!loginScreen || !mainApp || !pinInput || !btnIngresar || !pinError) {
+    console.error('Error: faltan elementos del login. Revisa los IDs en el HTML.');
+} else {
+    // Asociar eventos solo si los elementos existen
+    btnIngresar.addEventListener('click', validarPIN);
+    
+    document.querySelectorAll('.pin-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const value = btn.dataset.value;
+            if (value === 'clear') {
+                pinInput.value = pinInput.value.slice(0, -1);
+            } else {
+                if (pinInput.value.length < 4) {
+                    pinInput.value += value;
+                }
+            }
+            if (pinInput.value.length === 4) {
+                setTimeout(() => validarPIN(), 100);
+            }
+        });
+    });
+
+    pinInput.addEventListener('keyup', (e) => {
+        if (e.key === 'Enter') validarPIN();
+    });
+
+    pinInput.addEventListener('input', () => {
+        pinInput.value = pinInput.value.replace(/[^0-9]/g, '').slice(0, 4);
+    });
+
+    console.log('🧪 Login listo. PIN correcto:', PIN_CORRECTO);
+}
 
 function verificarSesion() {
     const sesionActiva = sessionStorage.getItem('autenticado');
@@ -25,71 +60,53 @@ function mostrarApp() {
 }
 
 function validarPIN() {
+    console.log('🔍 validarPIN ejecutada. Valor ingresado:', pinInput.value);
     const pinIngresado = pinInput.value;
-    
+
     if (pinIngresado === PIN_CORRECTO) {
         mostrarApp();
-        pinError.style.display = 'block';
+        pinError.style.display = 'none';   // ← CORREGIDO: ocultar mensaje de error
         intentosFallidos = 0;
+        pinInput.value = '';
     } else {
-       intentosFallidos++;
-        pinError.style.display = 'block';
+        intentosFallidos++;
+        pinError.style.display = 'block';   // ← mostrar "PIN incorrecto"
         pinInput.value = '';
         pinInput.focus();
-        
-       if (intentosFallidos >= 3) {
+
+        if (intentosFallidos >= 3) {
             alert('Demasiados intentos fallidos. El PIN es 1234');
             intentosFallidos = 0;
         }
     }
 }
 
-
-document.querySelectorAll('.pin-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        const value = btn.dataset.value;
-        if (value === 'clear') {
-            pinInput.value = pinInput.value.slice(0, -1);
-        } else {
-            if (pinInput.value.length < 4) {
-                pinInput.value += value;
-            }
-        }
-        if (pinInput.value.length === 4) {
-            setTimeout(() => validarPIN(), 100);
-        }
-    });
-});
-
-pinInput.addEventListener('keyup', (e) => {
-    if (e.key === 'Enter') validarPIN();
-});
-
-pinInput.addEventListener('input', () => {
-    pinInput.value = pinInput.value.replace(/[^0-9]/g, '').slice(0, 4);
-});
-
-btnIngresar.addEventListener('click', validarPIN);
 verificarSesion();
-document.getElementById('btnOlvidePIN').addEventListener('click', mostrarPista);
-document.getElementById('btnCerrarPista').addEventListener('click', ocultarPista);
 
-function mostrarPista() {
-    const pista = localStorage.getItem('pin_hint');
+// Eventos para "Olvidé mi PIN" (solo si los elementos existen)
+(function() {
+    const btnOlvide = document.getElementById('btnOlvidePIN');
+    const btnCerrar = document.getElementById('btnCerrarPista');
+    const pistaContainer = document.getElementById('pistaContainer');
     const pistaTexto = document.getElementById('pistaTexto');
-    const contenedor = document.getElementById('pistaContainer');
-    
-    if (pista && pista.trim() !== '') {
-        pistaTexto.textContent = pista;
-    } else {
-        pistaTexto.textContent = 'No hay pista configurada. Contacta al desarrollador.';
-    }
-    contenedor.style.display = 'block';
-}
 
-function ocultarPista() {
-    document.getElementById('pistaContainer').style.display = 'none';
-}
+    if (btnOlvide) {
+        btnOlvide.addEventListener('click', () => {
+            const pista = localStorage.getItem('pin_hint');
+            if (pista && pista.trim()) {
+                pistaTexto.textContent = pista;
+            } else {
+                pistaTexto.textContent = 'No hay pista. Contacta al desarrollador.';
+            }
+            pistaContainer.style.display = 'block';
+        });
+    }
+    if (btnCerrar) {
+        btnCerrar.addEventListener('click', () => {
+            pistaContainer.style.display = 'none';
+        });
+    }
+})();
 
 // ==================== DATOS Y ALMACENAMIENTO ====================
 let productos = [];
