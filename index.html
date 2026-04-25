@@ -39,12 +39,13 @@
     <!-- ==================== APP PRINCIPAL ==================== -->
     <div id="mainApp" class="app" style="display: none;">
         <div class="header">
-            <h1>🧾 Ventas YudelKeyla</h1>
+            <h1>🧾 Gestor de Ventas</h1>
             <div class="tabs">
                 <button class="tab-btn active" data-tab="productos">📦 Productos</button>
                 <button class="tab-btn" data-tab="venta">💰 Vender</button>
                 <button class="tab-btn" data-tab="historial">📋 Historial</button>
                 <button class="tab-btn" data-tab="estadisticas">📊 Estadísticas</button>
+                <button class="tab-btn" data-tab="info">ℹ️ Info</button>
             </div>
         </div>
 
@@ -269,6 +270,91 @@
         </div>
     </div>
 
+    
+    <!-- PESTAÑA INFORMACIÓN -->
+<div class="tab-content" id="tab-info">
+    <div class="info-container">
+        <!-- Sección Desarrollador -->
+        <div class="info-card">
+            <h2>👨‍💻 Desarrollador</h2>
+            <div class="dev-info">
+                <p><strong>Nombre:</strong> Ing. Yudel Noda Cepero</p>
+                <p><strong>Versión:</strong> 3.0</p>
+                <p><strong>Contacto:</strong> yudelnc@gmail.com</p>
+            </div>
+        </div>
+
+        <!-- Sección Manual de Usuario -->
+        <div class="info-card">
+            <h2>📖 Manual de Usuario</h2>
+            
+            <div class="manual-section">
+                <h3>📦 Productos</h3>
+                <p>Aquí agregas, editas y eliminas los productos que vendes.</p>
+                <ul>
+                    <li><strong>Agregar:</strong> Completa el formulario con nombre, precio de costo, precio de venta, stock inicial y fecha de compra. Si el producto ya existe, se suma al stock.</li>
+                    <li><strong>Editar:</strong> Toca el ícono ✏️ en cualquier producto para modificar sus datos.</li>
+                    <li><strong>Buscar:</strong> Usa la barra de búsqueda para encontrar productos rápidamente.</li>
+                    <li><strong>Exportar:</strong> Con el botón 📤 descargas la lista en formato Excel (.tsv).</li>
+                    <li><strong>Eliminar todos:</strong> El botón 🗑️ borra toda la lista (pide confirmación).</li>
+                </ul>
+            </div>
+
+            <div class="manual-section">
+                <h3>💰 Vender</h3>
+                <p>Registra una venta de forma rápida.</p>
+                <ul>
+                    <li><strong>Seleccionar producto:</strong> Toca el campo "Toca para seleccionar..." y elige el producto del catálogo. Puedes buscar dentro del modal que aparece.</li>
+                    <li><strong>Cantidad:</strong> Indica cuántas unidades vendes.</li>
+                    <li><strong>Carrito:</strong> Agrega productos al carrito. Puedes quitar items o vaciarlo.</li>
+                    <li><strong>Finalizar venta:</strong> Al confirmar, se descuenta el stock automáticamente y se guarda en el historial.</li>
+                </ul>
+            </div>
+
+            <div class="manual-section">
+                <h3>📋 Historial</h3>
+                <p>Consulta todas las ventas realizadas.</p>
+                <ul>
+                    <li>Filtra por <strong>fecha específica</strong> o por <strong>mes/año</strong>.</li>
+                    <li>Visualiza el <strong>total de ventas y ganancias</strong> del día y del mes.</li>
+                    <li>Exporta el historial completo con el botón 📤.</li>
+                    <li>Limpia todo el historial con el botón 🗑️.</li>
+                </ul>
+            </div>
+
+            <div class="manual-section">
+                <h3>📊 Estadísticas</h3>
+                <p>Obtén un resumen visual de tu negocio.</p>
+                <ul>
+                    <li>Revisa indicadores como ventas totales, promedio, mejor día y unidades vendidas.</li>
+                    <li>Gráfico de barras: ventas de los últimos 7 días.</li>
+                    <li>Gráfico circular: productos más vendidos.</li>
+                    <li>Exporta un reporte completo en formato Excel.</li>
+                </ul>
+            </div>
+
+            <div class="manual-section">
+                <h3>💾 Respaldo y Restauración</h3>
+                <p>Protege tu información.</p>
+                <ul>
+                    <li><strong>Descargar Respaldo:</strong> Guarda un archivo .json con todos tus datos (productos e historial).</li>
+                    <li><strong>Cargar Respaldo:</strong> Restaura los datos desde un archivo .json previamente guardado. Ideal para migrar a otro dispositivo o recuperar tras una actualización.</li>
+                </ul>
+            </div>
+
+            <div class="manual-section">
+                <h3>🔐 Seguridad</h3>
+                <p>La app se protege con un PIN de 4 dígitos (por defecto: 1234). Puedes cambiarlo en el código fuente.</p>
+            </div>
+
+            <div class="manual-section">
+                <h3>📴 Modo Offline</h3>
+                <p>La aplicación funciona completamente sin internet. Los datos se guardan en la memoria del dispositivo. Solo necesitas conexión la primera vez para cargar los gráficos.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
     <!-- MODAL PARA EXPORTAR DATOS (cuando no se puede descargar) -->
     <div id="modalExportar" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
         <div style="background: white; padding: 20px; border-radius: 20px; width: 90%; max-width: 500px; max-height: 80%; overflow-y: auto;">
@@ -284,6 +370,8 @@
             </div>
         </div>
     </div>
+
+    
     <!-- MODAL PARA SELECCIONAR PRODUCTO EN VENTA -->
 <div id="modalProductoVenta" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
     <div style="background: white; padding: 20px; border-radius: 20px; width: 90%; max-width: 400px; max-height: 80%; display: flex; flex-direction: column;">
