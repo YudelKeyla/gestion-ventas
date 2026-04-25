@@ -99,6 +99,16 @@
             <div class="lista-productos" id="listaProductos">
                 <div class="empty-state">No hay productos. Agrega uno arriba 👆</div>
             </div>
+            <!-- RESPALDO Y RESTAURACIÓN -->
+<div style="margin-top: 25px; padding: 15px; background: #f8f9fa; border-radius: 14px;">
+    <h3 style="margin-bottom: 10px; font-size: 16px;">💾 Respaldo de Datos</h3>
+    <p style="font-size: 12px; color: #666; margin-bottom: 10px;">Antes de actualizar la app, descarga un respaldo. Luego puedes restaurarlo.</p>
+    <div style="display: flex; gap: 10px;">
+        <button class="btn-secondary" id="btnRespaldar" style="flex:1;">📥 Descargar Respaldo</button>
+        <button class="btn-secondary" id="btnRestaurar" style="flex:1;">📤 Cargar Respaldo</button>
+    </div>
+    <input type="file" id="inputRestaurar" accept=".json" style="display: none;" />
+</div>
         </div>
 
        <!-- PESTAÑA VENDER -->
