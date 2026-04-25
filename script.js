@@ -4,7 +4,7 @@ function obtenerPIN() {
 }
 
 let PIN_CORRECTO = obtenerPIN();
-
+let intentosFallidos = 0;
 const loginScreen = document.getElementById('loginScreen');
 const mainApp = document.getElementById('mainApp');
 const pinInput = document.getElementById('pinInput');
