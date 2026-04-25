@@ -840,9 +840,10 @@ function cambiarPIN() {
     const actual = document.getElementById('pinActual').value;
     const nuevo = document.getElementById('pinNuevo').value;
     const confirmacion = document.getElementById('pinConfirmacion').value;
+    const pista = document.getElementById('pinPista').value.trim();
     const mensaje = document.getElementById('mensajePIN');
 
-    PIN_CORRECTO = obtenerPIN(); // actualiza por si acaba de cambiar
+    PIN_CORRECTO = obtenerPIN();
 
     if (actual !== PIN_CORRECTO) {
         mensaje.textContent = '❌ PIN actual incorrecto';
@@ -860,11 +861,12 @@ function cambiarPIN() {
         return;
     }
 
-    // Guardar el nuevo PIN
+    // Guardar nuevo PIN y pista
     localStorage.setItem('pin', nuevo);
+    localStorage.setItem('pin_hint', pista); // Guardar la pista (aunque esté vacía)
     PIN_CORRECTO = nuevo;
     cerrarModalCambioPIN();
-    alert('✅ PIN cambiado exitosamente. El nuevo PIN es ' + nuevo);
+    alert('✅ PIN cambiado exitosamente.');
 }
 
 // ==================== INICIALIZAR ====================
@@ -884,4 +886,23 @@ document.getElementById('btnEliminarTodosProductos').addEventListener('click', (
     }
 });
 
+document.getElementById('btnOlvidePIN').addEventListener('click', mostrarPista);
+document.getElementById('btnCerrarPista').addEventListener('click', ocultarPista);
+
+function mostrarPista() {
+    const pista = localStorage.getItem('pin_hint');
+    const pistaTexto = document.getElementById('pistaTexto');
+    const contenedor = document.getElementById('pistaContainer');
+    
+    if (pista && pista.trim() !== '') {
+        pistaTexto.textContent = pista;
+    } else {
+        pistaTexto.textContent = 'No hay pista configurada. Contacta al desarrollador.';
+    }
+    contenedor.style.display = 'block';
+}
+
+function ocultarPista() {
+    document.getElementById('pistaContainer').style.display = 'none';
+}
         
