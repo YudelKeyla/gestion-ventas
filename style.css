@@ -690,3 +690,9 @@ button {
 .manual-section li strong {
     color: #1a1a2e;
 }
+
+/* Destacar la última tarjeta (Ganancia Total) */
+.stat-card:last-child {
+    grid-column: span 2;
+    text-align: center;
+}
