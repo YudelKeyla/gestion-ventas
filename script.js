@@ -606,7 +606,9 @@ function actualizarEstadisticas() {
         document.getElementById('statsPromedio').textContent = '$0.00';
         document.getElementById('statsMejorDia').textContent = '-';
         document.getElementById('statsTotalUnidades').textContent = '0';
+        document.getElementById('statsGananciaTotal').textContent = '$0.00'; // ← También se resetea
         return;
+        
     }
     const totalVentas = historialVentas.reduce((s, v) => s + v.total, 0);
     const totalUnidades = historialVentas.reduce((s, v) => s + v.productos.reduce((ss, p) => ss + p.cantidad, 0), 0);
@@ -617,6 +619,13 @@ function actualizarEstadisticas() {
     document.getElementById('statsPromedio').textContent = `$${(totalVentas / historialVentas.length).toFixed(2)}`;
     document.getElementById('statsMejorDia').textContent = mejorDia ? `${mejorDia[0]} ($${mejorDia[1].toFixed(2)})` : '-';
     document.getElementById('statsTotalUnidades').textContent = totalUnidades;
+
+    // Calcular ganancia total acumulada
+const totalGanancia = historialVentas.reduce((s, v) => {
+    const gananciaVenta = v.productos.reduce((sum, p) => sum + ((p.precio - (p.precioCosto || 0)) * p.cantidad), 0);
+    return s + gananciaVenta;
+}, 0);
+document.getElementById('statsGananciaTotal').textContent = `$${totalGanancia.toFixed(2)}`;
 
     const ultimos7Dias = [];
     for (let i = 6; i >= 0; i--) {
