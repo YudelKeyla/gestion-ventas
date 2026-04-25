@@ -628,3 +628,65 @@ button {
     max-height: 200px;
     width: 100% !important;
 }
+
+/* ==================== PESTAÑA INFORMACIÓN ==================== */
+.info-container {
+    padding: 10px 0;
+}
+
+.info-card {
+    background: #f8f9fa;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.info-card h2 {
+    color: #1a1a2e;
+    font-size: 20px;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e0e0e0;
+    padding-bottom: 10px;
+}
+
+.dev-info p {
+    font-size: 16px;
+    margin-bottom: 8px;
+    color: #333;
+}
+
+.manual-section {
+    background: white;
+    border-radius: 14px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #e0e0e0;
+}
+
+.manual-section h3 {
+    color: #0f3460;
+    font-size: 16px;
+    margin-bottom: 10px;
+}
+
+.manual-section p {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 8px;
+}
+
+.manual-section ul {
+    padding-left: 20px;
+    margin: 0;
+}
+
+.manual-section li {
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+    line-height: 1.4;
+}
+
+.manual-section li strong {
+    color: #1a1a2e;
+}
