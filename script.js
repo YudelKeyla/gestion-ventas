@@ -1,6 +1,9 @@
 // ==================== AUTENTICACIÓN ====================
-const PIN_CORRECTO = '1234';
-let intentosFallidos = 0;
+function obtenerPIN() {
+    return localStorage.getItem('pin') || '1234'; // PIN por defecto
+}
+
+let PIN_CORRECTO = obtenerPIN();
 
 const loginScreen = document.getElementById('loginScreen');
 const mainApp = document.getElementById('mainApp');
@@ -812,6 +815,56 @@ function restaurarDatos(event) {
     };
     lector.readAsText(archivo);
     event.target.value = '';
+}
+// ==================== CAMBIO DE PIN ====================
+document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('btnCambiarPIN')?.addEventListener('click', abrirModalCambioPIN);
+    document.getElementById('btnGuardarPIN')?.addEventListener('click', cambiarPIN);
+    document.getElementById('btnCancelarPIN')?.addEventListener('click', cerrarModalCambioPIN);
+});
+
+function abrirModalCambioPIN() {
+    document.getElementById('modalCambiarPIN').style.display = 'flex';
+    document.getElementById('pinActual').value = '';
+    document.getElementById('pinNuevo').value = '';
+    document.getElementById('pinConfirmacion').value = '';
+    document.getElementById('mensajePIN').style.display = 'none';
+    document.getElementById('pinActual').focus();
+}
+
+function cerrarModalCambioPIN() {
+    document.getElementById('modalCambiarPIN').style.display = 'none';
+}
+
+function cambiarPIN() {
+    const actual = document.getElementById('pinActual').value;
+    const nuevo = document.getElementById('pinNuevo').value;
+    const confirmacion = document.getElementById('pinConfirmacion').value;
+    const mensaje = document.getElementById('mensajePIN');
+
+    PIN_CORRECTO = obtenerPIN(); // actualiza por si acaba de cambiar
+
+    if (actual !== PIN_CORRECTO) {
+        mensaje.textContent = '❌ PIN actual incorrecto';
+        mensaje.style.display = 'block';
+        return;
+    }
+    if (nuevo.length !== 4 || !/^\d{4}$/.test(nuevo)) {
+        mensaje.textContent = '❌ El PIN debe ser de 4 dígitos';
+        mensaje.style.display = 'block';
+        return;
+    }
+    if (nuevo !== confirmacion) {
+        mensaje.textContent = '❌ Los PINs no coinciden';
+        mensaje.style.display = 'block';
+        return;
+    }
+
+    // Guardar el nuevo PIN
+    localStorage.setItem('pin', nuevo);
+    PIN_CORRECTO = nuevo;
+    cerrarModalCambioPIN();
+    alert('✅ PIN cambiado exitosamente. El nuevo PIN es ' + nuevo);
 }
 
 // ==================== INICIALIZAR ====================
