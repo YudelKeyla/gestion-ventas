@@ -33,6 +33,16 @@
             <button class="btn-primary" id="btnIngresar">Ingresar</button>
             <p id="pinError" style="color: #e94560; margin-top: 10px; display: none;">PIN incorrecto</p>
             <p style="margin-top: 15px; font-size: 12px; color: #666;">PIN: XXXX</p>
+            
+            <!-- Olvidé mi PIN -->
+            
+<button id="btnOlvidePIN" style="background: none; border: none; color: #0f3460; text-decoration: underline; cursor: pointer; margin-top: 15px; font-size: 14px;">¿Olvidaste tu PIN?</button>
+<div id="pistaContainer" style="display: none; margin-top: 10px; padding: 12px; background: #fef08a; border-radius: 10px; text-align: center;">
+    <p style="margin: 0; font-size: 14px; color: #1a1a2e;"><strong>Tu pista:</strong></p>
+    <p id="pistaTexto" style="margin: 5px 0 0; font-size: 16px; font-weight: bold; color: #0f3460;"></p>
+    <button id="btnCerrarPista" style="background: #e2e8f0; border: none; padding: 5px 15px; border-radius: 8px; margin-top: 8px; font-size: 13px;">Cerrar</button>
+</div>
+            
         </div>
     </div>
 
@@ -286,6 +296,10 @@
                 <p><strong>Versión:</strong> 3.0</p>
                 <p><strong>Contacto:</strong> +53 52034233, yudelnc@gmail.com</p>
             </div>
+            <!-- Cambiar PIN -->
+<div style="margin-top: 20px; border-top: 1px solid #e0e0e0; padding-top: 15px;">
+    <button class="btn-primary" id="btnCambiarPIN" style="background: #e94560;">🔑 Cambiar PIN</button>
+</div>
         </div>
 
         <!-- Sección Manual de Usuario -->
@@ -395,6 +409,21 @@
     </div>
 </div>
 
+        <!-- MODAL PARA CAMBIAR PIN -->
+<div id="modalCambiarPIN" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9999; justify-content: center; align-items: center;">
+    <div style="background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 350px; text-align: center;">
+        <h3 style="margin-bottom: 20px;">🔑 Cambiar PIN</h3>
+        <input type="password" id="pinActual" maxlength="4" inputmode="numeric" placeholder="PIN actual" style="margin-bottom: 10px;" />
+        <input type="password" id="pinNuevo" maxlength="4" inputmode="numeric" placeholder="Nuevo PIN" style="margin-bottom: 10px;" />
+        <input type="password" id="pinConfirmacion" maxlength="4" inputmode="numeric" placeholder="Confirmar nuevo PIN" style="margin-bottom: 20px;" />
+        <input type="text" id="pinPista" placeholder="Pista de recuperación (opcional)" style="margin-bottom: 20px;" />
+        <div style="display: flex; gap: 10px;">
+            <button class="btn-primary" id="btnGuardarPIN" style="flex:2;">💾 Guardar</button>
+            <button class="btn-secondary" id="btnCancelarPIN" style="flex:1;">❌ Cancelar</button>
+        </div>
+        <p id="mensajePIN" style="margin-top: 10px; font-size: 14px; color: #dc2626; display: none;"></p>
+    </div>
+</div>
     <!-- Registrar Service Worker -->
     <script>
     if ('serviceWorker' in navigator) {
