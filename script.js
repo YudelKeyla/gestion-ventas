@@ -24,41 +24,26 @@ function mostrarApp() {
     sessionStorage.setItem('autenticado', 'true');
 }
 
-//function validarPIN() {
-//    const pinIngresado = pinInput.value;
-    
-//    if (pinIngresado === PIN_CORRECTO) {
-//        mostrarApp();
-//        pinError.style.display = 'block';
-//        intentosFallidos = 0;
-//    } else {
-//        intentosFallidos++;
- //       pinError.style.display = 'block';
- //       pinInput.value = '';
-//        pinInput.focus();
-        
- //       if (intentosFallidos >= 3) {
- //           alert('Demasiados intentos fallidos. El PIN es 1234');
- //           intentosFallidos = 0;
-  //      }
-  //  }
-//}
-
 function validarPIN() {
     const pinIngresado = pinInput.value;
     
     if (pinIngresado === PIN_CORRECTO) {
         mostrarApp();
-        pinError.style.display = 'none';
+        pinError.style.display = 'block';
         intentosFallidos = 0;
     } else {
-        alert('El PIN es incorrecto (prueba)');
-        intentosFallidos++;
+       intentosFallidos++;
         pinError.style.display = 'block';
         pinInput.value = '';
         pinInput.focus();
+        
+       if (intentosFallidos >= 3) {
+            alert('Demasiados intentos fallidos. El PIN es 1234');
+            intentosFallidos = 0;
+        }
     }
 }
+
 
 document.querySelectorAll('.pin-btn').forEach(btn => {
     btn.addEventListener('click', () => {
