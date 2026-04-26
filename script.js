@@ -394,18 +394,30 @@ function seleccionarProductoDesdeModal(id) {
     cerrarModalProductoVenta();
 }
 
-document.getElementById('btnCerrarModalProducto').addEventListener('click', cerrarModalProductoVenta);
-document.getElementById('buscarProductoVenta').addEventListener('input', function(e) {
-    actualizarListaModalProductos(e.target.value);
-});
-document.getElementById('btnLimpiarBusquedaVenta').addEventListener('click', function() {
-    document.getElementById('buscarProductoVenta').value = '';
-    actualizarListaModalProductos();
-    document.getElementById('buscarProductoVenta').focus();
-});
-document.getElementById('modalProductoVenta').addEventListener('click', function(e) {
-    if (e.target === this) cerrarModalProductoVenta();
-});
+(function() {
+    const btnCerrarModalProducto = document.getElementById('btnCerrarModalProducto');
+    const buscarProductoVenta = document.getElementById('buscarProductoVenta');
+    const btnLimpiarBusquedaVenta = document.getElementById('btnLimpiarBusquedaVenta');
+    const modalProductoVenta = document.getElementById('modalProductoVenta');
+    
+    if (!btnCerrarModalProducto || !buscarProductoVenta || !btnLimpiarBusquedaVenta || !modalProductoVenta) {
+        console.error('Faltan elementos del modal de venta');
+        return;
+    }
+    
+    btnCerrarModalProducto.addEventListener('click', cerrarModalProductoVenta);
+    buscarProductoVenta.addEventListener('input', function(e) {
+        actualizarListaModalProductos(e.target.value);
+    });
+    btnLimpiarBusquedaVenta.addEventListener('click', function() {
+        buscarProductoVenta.value = '';
+        actualizarListaModalProductos();
+        buscarProductoVenta.focus();
+    });
+    modalProductoVenta.addEventListener('click', function(e) {
+        if (e.target === this) cerrarModalProductoVenta();
+    });
+})();
 
 function seleccionarProductoVenta(id) {
     const producto = productos.find(p => p.id === id);
