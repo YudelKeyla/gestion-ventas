@@ -130,7 +130,7 @@
             <label>Seleccionar producto:</label>
             
             <!-- Área que se toca para abrir el modal -->
-            <div id="selectorVisual" style="padding: 14px; border: 2px solid #e0e0e0; border-radius: 14px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="abrirModalProductoVenta()">
+            <div id="selectorVisual" style="padding: 14px; border: 2px solid #e0e0e0; border-radius: 14px; background: white; cursor: pointer; display: flex; justify-content: space-between; align-items: center;" onclick="abrirModalProductoVenta()" ontouchend="abrirModalProductoVenta(); return false;">
                 <span id="textoSeleccionProducto" style="color: #9ca3af;">Toca para seleccionar un producto...</span>
                 <span id="precioSeleccionVisual" style="font-weight: bold; color: #0f3460;"></span>
                 <span id="btnQuitarSeleccionVisual" style="display: none; cursor: pointer; color: #dc2626; font-size: 18px;" onclick="event.stopPropagation(); deseleccionarProducto();">✕</span>
