@@ -1,6 +1,6 @@
 // ==================== AUTENTICACIÓN ====================
 function obtenerPIN() {
-    return localStorage.getItem('pin') || '1234'; // PIN por defecto
+    return localStorage.getItem('pin') || '1234';
 }
 
 let PIN_CORRECTO = obtenerPIN();
@@ -12,11 +12,9 @@ const pinInput = document.getElementById('pinInput');
 const btnIngresar = document.getElementById('btnIngresar');
 const pinError = document.getElementById('pinError');
 
-// Verificar que los elementos esenciales existan
 if (!loginScreen || !mainApp || !pinInput || !btnIngresar || !pinError) {
     console.error('Error: faltan elementos del login. Revisa los IDs en el HTML.');
 } else {
-    // Asociar eventos solo si los elementos existen
     btnIngresar.addEventListener('click', validarPIN);
     
     document.querySelectorAll('.pin-btn').forEach(btn => {
@@ -42,15 +40,11 @@ if (!loginScreen || !mainApp || !pinInput || !btnIngresar || !pinError) {
     pinInput.addEventListener('input', () => {
         pinInput.value = pinInput.value.replace(/[^0-9]/g, '').slice(0, 4);
     });
-
-    console.log('🧪 Login listo. PIN correcto:', PIN_CORRECTO);
 }
 
 function verificarSesion() {
     const sesionActiva = sessionStorage.getItem('autenticado');
-    if (sesionActiva === 'true') {
-        mostrarApp();
-    }
+    if (sesionActiva === 'true') mostrarApp();
 }
 
 function mostrarApp() {
@@ -60,22 +54,19 @@ function mostrarApp() {
 }
 
 function validarPIN() {
-    console.log('🔍 validarPIN ejecutada. Valor ingresado:', pinInput.value);
     const pinIngresado = pinInput.value;
-
     if (pinIngresado === PIN_CORRECTO) {
         mostrarApp();
-        pinError.style.display = 'none';   // ← CORREGIDO: ocultar mensaje de error
+        pinError.style.display = 'none';
         intentosFallidos = 0;
         pinInput.value = '';
     } else {
         intentosFallidos++;
-        pinError.style.display = 'block';   // ← mostrar "PIN incorrecto"
+        pinError.style.display = 'block';
         pinInput.value = '';
         pinInput.focus();
-
         if (intentosFallidos >= 3) {
-            alert('Demasiados intentos fallidos. El PIN es 1234');
+            alert('Demasiados intentos fallidos. El PIN es ' + PIN_CORRECTO);
             intentosFallidos = 0;
         }
     }
@@ -83,36 +74,29 @@ function validarPIN() {
 
 verificarSesion();
 
-// Eventos para "Olvidé mi PIN" (solo si los elementos existen)
+// Eventos para "Olvidé mi PIN"
 (function() {
     const btnOlvide = document.getElementById('btnOlvidePIN');
     const btnCerrar = document.getElementById('btnCerrarPista');
     const pistaContainer = document.getElementById('pistaContainer');
     const pistaTexto = document.getElementById('pistaTexto');
-
     if (btnOlvide) {
         btnOlvide.addEventListener('click', () => {
             const pista = localStorage.getItem('pin_hint');
-            if (pista && pista.trim()) {
-                pistaTexto.textContent = pista;
-            } else {
-                pistaTexto.textContent = 'No hay pista. Contacta al desarrollador.';
-            }
+            pistaTexto.textContent = (pista && pista.trim()) ? pista : 'No hay pista. Contacta al desarrollador.';
             pistaContainer.style.display = 'block';
         });
     }
     if (btnCerrar) {
-        btnCerrar.addEventListener('click', () => {
-            pistaContainer.style.display = 'none';
-        });
+        btnCerrar.addEventListener('click', () => { pistaContainer.style.display = 'none'; });
     }
 })();
-
 
 // ==================== DATOS Y ALMACENAMIENTO ====================
 let productos = [];
 let carrito = [];
 let historialVentas = [];
+let movimientosCaja = [];  // ← MOVIDO AQUÍ ARRIBA (antes se declaraba abajo)
 let productosFiltrados = [];
 let graficoSemanalInstancia = null;
 let graficoProductosInstancia = null;
@@ -136,7 +120,7 @@ function cargarDatos() {
     actualizarInterfazVenta();
     actualizarHistorial();
     llenarSelectAnios();
-    cargarMovimientosCaja(); // ← agrega esta línea
+    cargarMovimientosCaja();
 }
 
 function guardarProductos() {
@@ -162,13 +146,8 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
         btn.classList.add('active');
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.getElementById(`tab-${tabId}`).classList.add('active');
-        if (tabId === 'historial') {
-            actualizarTotalDelDia();
-            actualizarTotalDelMes();
-        }
-        if (tabId === 'estadisticas') {
-            actualizarEstadisticas();
-        }
+        if (tabId === 'historial') { actualizarTotalDelDia(); actualizarTotalDelMes(); }
+        if (tabId === 'estadisticas') { actualizarEstadisticas(); }
     });
 });
 
@@ -216,7 +195,6 @@ function guardarProducto() {
         alert('Completa todos los campos correctamente. El stock debe ser al menos 1.');
         return;
     }
-    
     if (precioVenta <= precioCosto) {
         if (!confirm('⚠️ El precio de venta es menor o igual al costo. ¿Estás seguro?')) return;
     }
@@ -242,21 +220,11 @@ function guardarProducto() {
                 actualizarTodo();
                 return;
             } else {
-                if (!confirm(`"${nombre}" ya existe con otros precios. ¿Agregar como nuevo producto de todas formas?`)) {
-                    return;
-                }
+                if (!confirm(`"${nombre}" ya existe con otros precios. ¿Agregar como nuevo producto de todas formas?`)) return;
             }
         }
-        productos.push({
-            id: Date.now(),
-            nombre: nombre,
-            precioCosto: precioCosto,
-            precio: precioVenta,
-            stock: cantidad,
-            fechaCompra: fechaCompra
-        });
+        productos.push({ id: Date.now(), nombre, precioCosto, precio: precioVenta, stock: cantidad, fechaCompra });
     }
-    
     guardarProductos();
     limpiarFormularioProducto();
     actualizarTodo();
@@ -304,30 +272,23 @@ function eliminarProducto(id) {
 
 function filtrarProductos() {
     const termino = buscarInput.value.trim().toLowerCase();
-    if (termino === '') {
-        productosFiltrados = [...productos];
-        btnLimpiarBusqueda.style.display = 'none';
-    } else {
-        productosFiltrados = productos.filter(p => p.nombre.toLowerCase().includes(termino));
-        btnLimpiarBusqueda.style.display = 'flex';
-    }
+    productosFiltrados = termino ? productos.filter(p => p.nombre.toLowerCase().includes(termino)) : [...productos];
+    btnLimpiarBusqueda.style.display = termino ? 'flex' : 'none';
     actualizarListaProductos();
 }
 
 function actualizarListaProductos() {
-    // Ordenar alfabéticamente antes de mostrar
     const productosOrdenados = [...productosFiltrados].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
-    const productosAMostrar = productosOrdenados;
     cantidadProductosSpan.textContent = productos.length;
     if (productos.length === 0) {
         listaProductosDiv.innerHTML = '<div class="empty-state">No hay productos. Agrega uno arriba 👆</div>';
         return;
     }
-    if (productosAMostrar.length === 0) {
+    if (productosOrdenados.length === 0) {
         listaProductosDiv.innerHTML = `<div class="no-results">🔍 Sin resultados para "${buscarInput.value}"<br><button class="btn-secondary" onclick="document.getElementById('buscarProducto').value=''; filtrarProductos();">Ver todos</button></div>`;
         return;
     }
-    listaProductosDiv.innerHTML = productosAMostrar.map(prod => {
+    listaProductosDiv.innerHTML = productosOrdenados.map(prod => {
         const ganancia = prod.precio - (prod.precioCosto || 0);
         const stockClass = (prod.stock || 0) <= 3 ? 'stock-bajo' : 'stock-ok';
         return `<div class="producto-item">
@@ -359,18 +320,10 @@ function cerrarModalProductoVenta() {
 function actualizarListaModalProductos(termino = '') {
     const term = termino.trim().toLowerCase();
     const btnLimpiar = document.getElementById('btnLimpiarBusquedaVenta');
-    // Ordenar alfabéticamente antes de filtrar
     let productosFiltrados = [...productos].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
     
     if (term) {
         productosFiltrados = productosFiltrados.filter(p => p.nombre.toLowerCase().includes(term));
-        btnLimpiar.style.display = 'flex';
-    } else {
-        btnLimpiar.style.display = 'none';
-    }
-    
-    if (term) {
-        productosFiltrados = productos.filter(p => p.nombre.toLowerCase().includes(term));
         btnLimpiar.style.display = 'flex';
     } else {
         btnLimpiar.style.display = 'none';
@@ -384,7 +337,6 @@ function actualizarListaModalProductos(termino = '') {
         listaProductosVenta.innerHTML = `<div class="no-results">🔍 Sin resultados para "${term}"</div>`;
         return;
     }
-    
     listaProductosVenta.innerHTML = productosFiltrados.map(p => {
         const agotado = (p.stock || 0) === 0;
         const seleccionado = productoSeleccionadoId === p.id;
@@ -399,49 +351,33 @@ function actualizarListaModalProductos(termino = '') {
     }).join('');
 }
 
-function seleccionarProductoDesdeModal(id) {
-    seleccionarProductoVenta(id);
-    cerrarModalProductoVenta();
-}
+function seleccionarProductoDesdeModal(id) { seleccionarProductoVenta(id); cerrarModalProductoVenta(); }
 
 (function() {
-    const btnCerrarModalProducto = document.getElementById('btnCerrarModalProducto');
-    const buscarProductoVenta = document.getElementById('buscarProductoVenta');
-    const btnLimpiarBusquedaVenta = document.getElementById('btnLimpiarBusquedaVenta');
-    const modalProductoVenta = document.getElementById('modalProductoVenta');
-    
-    if (!btnCerrarModalProducto || !buscarProductoVenta || !btnLimpiarBusquedaVenta || !modalProductoVenta) {
-        console.error('Faltan elementos del modal de venta');
-        return;
-    }
-    
-    btnCerrarModalProducto.addEventListener('click', cerrarModalProductoVenta);
-    buscarProductoVenta.addEventListener('input', function(e) {
-        actualizarListaModalProductos(e.target.value);
-    });
-    btnLimpiarBusquedaVenta.addEventListener('click', function() {
-        buscarProductoVenta.value = '';
+    const btnCerrar = document.getElementById('btnCerrarModalProducto');
+    const modal = document.getElementById('modalProductoVenta');
+    if (btnCerrar) btnCerrar.addEventListener('click', cerrarModalProductoVenta);
+    if (modal) modal.addEventListener('click', function(e) { if (e.target === this) cerrarModalProductoVenta(); });
+    const bBuscar = document.getElementById('buscarProductoVenta');
+    if (bBuscar) bBuscar.addEventListener('input', function(e) { actualizarListaModalProductos(e.target.value); });
+    const bLimpiar = document.getElementById('btnLimpiarBusquedaVenta');
+    if (bLimpiar) bLimpiar.addEventListener('click', function() {
+        document.getElementById('buscarProductoVenta').value = '';
         actualizarListaModalProductos();
-        buscarProductoVenta.focus();
-    });
-    modalProductoVenta.addEventListener('click', function(e) {
-        if (e.target === this) cerrarModalProductoVenta();
+        document.getElementById('buscarProductoVenta').focus();
     });
 })();
 
 function seleccionarProductoVenta(id) {
     const producto = productos.find(p => p.id === id);
     if (!producto || (producto.stock || 0) === 0) return;
-    
     productoSeleccionadoId = id;
     selectProductoVentaHidden.value = id;
     precioUnitarioSpan.textContent = `$${producto.precio.toFixed(2)}`;
-    
     document.getElementById('textoSeleccionProducto').textContent = producto.nombre;
     document.getElementById('precioSeleccionVisual').textContent = `$${producto.precio.toFixed(2)}`;
     document.getElementById('btnQuitarSeleccionVisual').style.display = 'block';
     productoSeleccionadoInfo.style.display = 'block';
-    
     nombreProductoSeleccionado.textContent = producto.nombre;
     precioProductoSeleccionado.textContent = `$${producto.precio.toFixed(2)}`;
     stockProductoSeleccionado.textContent = producto.stock || 0;
@@ -452,16 +388,12 @@ function deseleccionarProducto() {
     selectProductoVentaHidden.value = '';
     productoSeleccionadoInfo.style.display = 'none';
     precioUnitarioSpan.textContent = '$0.00';
-    
     document.getElementById('textoSeleccionProducto').textContent = 'Toca para seleccionar un producto...';
     document.getElementById('precioSeleccionVisual').textContent = '';
     document.getElementById('btnQuitarSeleccionVisual').style.display = 'none';
 }
 
-function actualizarInterfazVenta() {
-    // Esta función queda de respaldo, pero ya no se usa directamente
-    actualizarListaModalProductos();
-}
+function actualizarInterfazVenta() { actualizarListaModalProductos(); }
 
 // ==================== CARRITO Y VENTAS ====================
 const cantidadVenta = document.getElementById('cantidadVenta');
@@ -476,32 +408,16 @@ btnVaciarCarrito.addEventListener('click', () => { if (carrito.length > 0 && con
 
 function agregarAlCarrito() {
     const productoId = productoSeleccionadoId || selectProductoVentaHidden.value;
-    if (!productoId) { alert('Selecciona un producto de la lista'); return; }
-    
+    if (!productoId) { alert('Selecciona un producto'); return; }
     const producto = productos.find(p => p.id == productoId);
     const cantidad = parseInt(cantidadVenta.value);
     if (cantidad < 1) { alert('Cantidad debe ser al menos 1'); return; }
-    if (cantidad > (producto.stock || 0)) {
-        alert(`Stock insuficiente. Solo hay ${producto.stock || 0} unidades.`);
-        return;
-    }
-    
+    if (cantidad > (producto.stock || 0)) { alert(`Stock insuficiente. Solo hay ${producto.stock || 0} unidades.`); return; }
     producto.stock -= cantidad;
     guardarProductos();
-    
     const itemExistente = carrito.find(item => item.id === producto.id);
-    if (itemExistente) {
-        itemExistente.cantidad += cantidad;
-    } else {
-        carrito.push({
-            id: producto.id,
-            nombre: producto.nombre,
-            precio: producto.precio,
-            precioCosto: producto.precioCosto || 0,
-            cantidad: cantidad
-        });
-    }
-    
+    if (itemExistente) itemExistente.cantidad += cantidad;
+    else carrito.push({ id: producto.id, nombre: producto.nombre, precio: producto.precio, precioCosto: producto.precioCosto || 0, cantidad });
     actualizarCarrito();
     actualizarTodo();
     deseleccionarProducto();
@@ -537,10 +453,7 @@ function actualizarCarrito() {
 function quitarDelCarrito(index) {
     const item = carrito[index];
     const producto = productos.find(p => p.id === item.id);
-    if (producto) {
-        producto.stock += item.cantidad;
-        guardarProductos();
-    }
+    if (producto) { producto.stock += item.cantidad; guardarProductos(); }
     carrito.splice(index, 1);
     actualizarCarrito();
     actualizarTodo();
@@ -549,26 +462,12 @@ function quitarDelCarrito(index) {
 btnFinalizar.addEventListener('click', () => {
     if (carrito.length === 0) { alert('Carrito vacío'); return; }
     const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-    const venta = {
-        id: Date.now(),
-        fecha: new Date().toISOString(),
-        productos: carrito.map(item => ({
-            id: item.id,
-            nombre: item.nombre,
-            precio: item.precio,
-            precioCosto: item.precioCosto || 0,
-            cantidad: item.cantidad
-        })),
-        total: total
-    };
-    historialVentas.push(venta);
+    historialVentas.push({ id: Date.now(), fecha: new Date().toISOString(), productos: carrito.map(item => ({ id: item.id, nombre: item.nombre, precio: item.precio, precioCosto: item.precioCosto || 0, cantidad: item.cantidad })), total });
     guardarHistorial();
-    
     ventanaCerrandose = true;
     carrito = [];
     actualizarCarrito();
     ventanaCerrandose = false;
-    
     actualizarHistorial();
     llenarSelectAnios();
     actualizarTodo();
@@ -614,50 +513,30 @@ function actualizarHistorial(ventasFiltradas = null) {
 function actualizarTotalDelDia() {
     const hoy = new Date().toLocaleDateString('es-ES');
     const ventasHoy = historialVentas.filter(v => new Date(v.fecha).toLocaleDateString('es-ES') === hoy);
-    
-    const totalVenta = ventasHoy.reduce((s, v) => s + v.total, 0);
-    totalDelDiaSpan.textContent = `$${totalVenta.toFixed(2)}`;
-    
-    const totalGanancia = ventasHoy.reduce((s, v) => {
-        const gananciaVenta = v.productos.reduce((sum, p) => sum + ((p.precio - (p.precioCosto || 0)) * p.cantidad), 0);
-        return s + gananciaVenta;
-    }, 0);
-    gananciaDelDiaSpan.textContent = `$${totalGanancia.toFixed(2)}`;
+    totalDelDiaSpan.textContent = `$${ventasHoy.reduce((s, v) => s + v.total, 0).toFixed(2)}`;
+    gananciaDelDiaSpan.textContent = `$${ventasHoy.reduce((s, v) => s + v.productos.reduce((sum, p) => sum + ((p.precio - (p.precioCosto || 0)) * p.cantidad), 0), 0).toFixed(2)}`;
 }
 
 function actualizarTotalDelMes() {
     const ahora = new Date();
-    const ventasMes = historialVentas.filter(v => {
-        const f = new Date(v.fecha);
-        return f.getMonth() === ahora.getMonth() && f.getFullYear() === ahora.getFullYear();
-    });
-    
-    const totalVenta = ventasMes.reduce((s, v) => s + v.total, 0);
-    totalDelMesSpan.textContent = `$${totalVenta.toFixed(2)}`;
-    
-    const totalGanancia = ventasMes.reduce((s, v) => {
-        const gananciaVenta = v.productos.reduce((sum, p) => sum + ((p.precio - (p.precioCosto || 0)) * p.cantidad), 0);
-        return s + gananciaVenta;
-    }, 0);
-    gananciaDelMesSpan.textContent = `$${totalGanancia.toFixed(2)}`;
+    const ventasMes = historialVentas.filter(v => { const f = new Date(v.fecha); return f.getMonth() === ahora.getMonth() && f.getFullYear() === ahora.getFullYear(); });
+    totalDelMesSpan.textContent = `$${ventasMes.reduce((s, v) => s + v.total, 0).toFixed(2)}`;
+    gananciaDelMesSpan.textContent = `$${ventasMes.reduce((s, v) => s + v.productos.reduce((sum, p) => sum + ((p.precio - (p.precioCosto || 0)) * p.cantidad), 0), 0).toFixed(2)}`;
 }
 
 document.getElementById('btnLimpiarHistorial').addEventListener('click', () => {
     if (historialVentas.length > 0 && confirm('¿Eliminar TODO el historial?')) { historialVentas = []; guardarHistorial(); actualizarHistorial(); llenarSelectAnios(); }
 });
-
 document.getElementById('btnFiltrarFecha').addEventListener('click', () => {
     if (!filtroFecha.value) { actualizarHistorial(); return; }
     actualizarHistorial(historialVentas.filter(v => new Date(v.fecha).toISOString().split('T')[0] === filtroFecha.value));
 });
-
 document.getElementById('btnFiltrarMes').addEventListener('click', () => {
     let ventas = historialVentas;
     if (filtroMes.value !== '') ventas = ventas.filter(v => new Date(v.fecha).getMonth() === parseInt(filtroMes.value));
     if (filtroAnio.value !== '') ventas = ventas.filter(v => new Date(v.fecha).getFullYear() === parseInt(filtroAnio.value));
     actualizarHistorial(ventas);
 });
-
 document.getElementById('btnResetFiltro').addEventListener('click', () => {
     filtroFecha.value = filtroMes.value = filtroAnio.value = '';
     actualizarHistorial();
@@ -670,9 +549,8 @@ function actualizarEstadisticas() {
         document.getElementById('statsPromedio').textContent = '$0.00';
         document.getElementById('statsMejorDia').textContent = '-';
         document.getElementById('statsTotalUnidades').textContent = '0';
-        document.getElementById('statsGananciaTotal').textContent = '$0.00'; // ← También se resetea
+        document.getElementById('statsGananciaTotal').textContent = '$0.00';
         return;
-        
     }
     const totalVentas = historialVentas.reduce((s, v) => s + v.total, 0);
     const totalUnidades = historialVentas.reduce((s, v) => s + v.productos.reduce((ss, p) => ss + p.cantidad, 0), 0);
@@ -683,13 +561,8 @@ function actualizarEstadisticas() {
     document.getElementById('statsPromedio').textContent = `$${(totalVentas / historialVentas.length).toFixed(2)}`;
     document.getElementById('statsMejorDia').textContent = mejorDia ? `${mejorDia[0]} ($${mejorDia[1].toFixed(2)})` : '-';
     document.getElementById('statsTotalUnidades').textContent = totalUnidades;
-
-    // Calcular ganancia total acumulada
-const totalGanancia = historialVentas.reduce((s, v) => {
-    const gananciaVenta = v.productos.reduce((sum, p) => sum + ((p.precio - (p.precioCosto || 0)) * p.cantidad), 0);
-    return s + gananciaVenta;
-}, 0);
-document.getElementById('statsGananciaTotal').textContent = `$${totalGanancia.toFixed(2)}`;
+    const totalGanancia = historialVentas.reduce((s, v) => s + v.productos.reduce((sum, p) => sum + ((p.precio - (p.precioCosto || 0)) * p.cantidad), 0), 0);
+    document.getElementById('statsGananciaTotal').textContent = `$${totalGanancia.toFixed(2)}`;
 
     const ultimos7Dias = [];
     for (let i = 6; i >= 0; i--) {
@@ -715,20 +588,13 @@ function exportarTipo(datosFormateados, nombreArchivo, titulo) {
     const claves = Object.keys(datosFormateados[0]);
     let texto = claves.join('\t') + '\n';
     texto += datosFormateados.map(fila => claves.map(k => fila[k] || '').join('\t')).join('\n');
-    
     datosParaCompartir = texto;
     tituloParaCompartir = nombreArchivo;
-    
     const blob = new Blob([texto], { type: 'text/tab-separated-values' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = `${nombreArchivo}.tsv`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
+    a.href = url; a.download = `${nombreArchivo}.tsv`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
     setTimeout(() => {
         document.getElementById('modalTitulo').textContent = '📤 ' + titulo;
         document.getElementById('modalContenido').value = texto;
@@ -739,73 +605,32 @@ function exportarTipo(datosFormateados, nombreArchivo, titulo) {
 
 function copiarAlPortapapeles(texto) {
     if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(texto).catch(() => {
-            const textarea = document.getElementById('modalContenido');
-            textarea.select();
-            document.execCommand('copy');
-        });
+        navigator.clipboard.writeText(texto).catch(() => {});
     } else {
         const textarea = document.getElementById('modalContenido');
-        textarea.select();
-        document.execCommand('copy');
+        textarea.select(); document.execCommand('copy');
     }
 }
 
-document.getElementById('btnCerrarModal').addEventListener('click', () => {
-    document.getElementById('modalExportar').style.display = 'none';
-});
-document.getElementById('btnCopiarModal').addEventListener('click', () => {
-    copiarAlPortapapeles(datosParaCompartir);
-    alert('✅ Datos copiados al portapapeles');
-});
+document.getElementById('btnCerrarModal').addEventListener('click', () => { document.getElementById('modalExportar').style.display = 'none'; });
+document.getElementById('btnCopiarModal').addEventListener('click', () => { copiarAlPortapapeles(datosParaCompartir); alert('✅ Copiado'); });
 document.getElementById('btnCompartirModal').addEventListener('click', () => {
-    if (navigator.share) {
-        navigator.share({
-            title: tituloParaCompartir,
-            text: datosParaCompartir
-        }).catch(() => {});
-    } else {
-        copiarAlPortapapeles(datosParaCompartir);
-        alert('📋 Datos copiados. Pégalos en WhatsApp, Notas, etc.');
-    }
+    if (navigator.share) { navigator.share({ title: tituloParaCompartir, text: datosParaCompartir }).catch(()=>{}); }
+    else { copiarAlPortapapeles(datosParaCompartir); alert('📋 Copiado. Pégalo donde quieras.'); }
 });
-document.getElementById('modalExportar').addEventListener('click', function(e) {
-    if (e.target === this) this.style.display = 'none';
-});
+document.getElementById('modalExportar').addEventListener('click', function(e) { if (e.target === this) this.style.display = 'none'; });
 
 document.getElementById('btnExportarProductos').addEventListener('click', () => {
     if (productos.length === 0) { alert('No hay productos'); return; }
-    const datos = productos.map(p => ({
-        'Nombre': p.nombre,
-        'Precio Venta': p.precio,
-        'Precio Costo': p.precioCosto || 0,
-        'Stock': p.stock || 0,
-        'Ganancia Unitaria': (p.precio - (p.precioCosto || 0)).toFixed(2),
-        'Fecha Compra': p.fechaCompra || ''
-    }));
-    exportarTipo(datos, `productos_${new Date().toISOString().split('T')[0]}`, 'Productos');
+    exportarTipo(productos.map(p => ({ 'Nombre': p.nombre, 'Precio Venta': p.precio, 'Precio Costo': p.precioCosto||0, 'Stock': p.stock||0, 'Ganancia Unitaria': (p.precio - (p.precioCosto||0)).toFixed(2), 'Fecha Compra': p.fechaCompra||'' })), `productos_${new Date().toISOString().split('T')[0]}`, 'Productos');
 });
-
 document.getElementById('btnExportarHistorial').addEventListener('click', () => {
     if (historialVentas.length === 0) { alert('No hay ventas'); return; }
-    const datos = historialVentas.map(v => ({
-        'Fecha': new Date(v.fecha).toLocaleString('es-ES'),
-        'Productos': v.productos.map(p => `${p.cantidad}x ${p.nombre}`).join('; '),
-        'Total': v.total,
-        'Ganancia': v.productos.reduce((sum, p) => sum + ((p.precio - (p.precioCosto || 0)) * p.cantidad), 0).toFixed(2)
-    }));
-    exportarTipo(datos, `historial_${new Date().toISOString().split('T')[0]}`, 'Historial');
+    exportarTipo(historialVentas.map(v => ({ 'Fecha': new Date(v.fecha).toLocaleString('es-ES'), 'Productos': v.productos.map(p => `${p.cantidad}x ${p.nombre}`).join('; '), 'Total': v.total, 'Ganancia': v.productos.reduce((sum, p) => sum + ((p.precio - (p.precioCosto||0)) * p.cantidad), 0).toFixed(2) })), `historial_${new Date().toISOString().split('T')[0]}`, 'Historial');
 });
-
 document.getElementById('btnExportarEstadisticas').addEventListener('click', () => {
     if (historialVentas.length === 0) { alert('No hay datos'); return; }
-    const datos = historialVentas.map(v => ({
-        'Fecha': new Date(v.fecha).toLocaleString('es-ES'),
-        'Productos': v.productos.map(p => `${p.cantidad}x ${p.nombre}`).join('; '),
-        'Total': v.total,
-        'Ganancia': v.productos.reduce((sum, p) => sum + ((p.precio - (p.precioCosto || 0)) * p.cantidad), 0).toFixed(2)
-    }));
-    exportarTipo(datos, `reporte_${new Date().toISOString().split('T')[0]}`, 'Reporte Completo');
+    exportarTipo(historialVentas.map(v => ({ 'Fecha': new Date(v.fecha).toLocaleString('es-ES'), 'Productos': v.productos.map(p => `${p.cantidad}x ${p.nombre}`).join('; '), 'Total': v.total, 'Ganancia': v.productos.reduce((sum, p) => sum + ((p.precio - (p.precioCosto||0)) * p.cantidad), 0).toFixed(2) })), `reporte_${new Date().toISOString().split('T')[0]}`, 'Reporte');
 });
 
 // ==================== ACTUALIZAR TODO ====================
@@ -815,82 +640,58 @@ function actualizarTodo() {
     actualizarInterfazVenta();
     actualizarResumenFinanzas();
 }
+
 // ==================== RESPALDO Y RESTAURACIÓN ====================
 document.getElementById('btnRespaldar').addEventListener('click', respaldarDatos);
-document.getElementById('btnRestaurar').addEventListener('click', () => {
-    document.getElementById('inputRestaurar').click();
-});
+document.getElementById('btnRestaurar').addEventListener('click', () => { document.getElementById('inputRestaurar').click(); });
 document.getElementById('inputRestaurar').addEventListener('change', restaurarDatos);
 
 function respaldarDatos() {
     const datos = {
         productos: productos,
         historialVentas: historialVentas,
-        movimientosCaja: movimientosCaja,  // ← NUEVO: incluye finanzas
+        movimientosCaja: movimientosCaja,
         fechaRespaldo: new Date().toISOString(),
         version: '3.0'
     };
-    
     const blob = new Blob([JSON.stringify(datos, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = `respaldo_ventas_${new Date().toISOString().split('T')[0]}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    
+    a.href = url; a.download = `respaldo_ventas_${new Date().toISOString().split('T')[0]}.json`;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
     alert('✅ Respaldo descargado. Guárdalo en un lugar seguro.');
 }
 
 function restaurarDatos(event) {
     const archivo = event.target.files[0];
     if (!archivo) return;
-    
-    if (!confirm('⚠️ Esto REEMPLAZARÁ todos tus datos actuales. ¿Continuar?')) {
-        event.target.value = '';
-        return;
-    }
-    
+    if (!confirm('⚠️ Esto REEMPLAZARÁ todos tus datos actuales. ¿Continuar?')) { event.target.value = ''; return; }
     const lector = new FileReader();
     lector.onload = function(e) {
         try {
             const datos = JSON.parse(e.target.result);
-            
-          if (datos.productos && datos.historialVentas) {
-    productos = datos.productos;
-    historialVentas = datos.historialVentas;
-    
-    // Restaurar también movimientos de caja si existen en el respaldo
-    if (datos.movimientosCaja) {
-        movimientosCaja = datos.movimientosCaja;
-        guardarMovimientosCaja();
-    } else {
-        movimientosCaja = [];
-        guardarMovimientosCaja();
-    }
-    
-    guardarProductos();
-    guardarHistorial();
-    productosFiltrados = [...productos];
-    actualizarListaProductos();
-    actualizarInterfazVenta();
-    actualizarHistorial();
-    llenarSelectAnios();
-    actualizarListaMovimientos();      // ← NUEVO: actualiza la lista de finanzas
-    actualizarResumenFinanzas();       // ← Ya existía
-    alert(`✅ Datos restaurados exitosamente.\nProductos: ${productos.length}\nVentas: ${historialVentas.length}\nMovimientos de caja: ${movimientosCaja.length}`);
-            } else {
-                alert('❌ El archivo no es válido.');
-            }
-        } catch (error) {
-            alert('❌ Error al leer el archivo. Asegúrate de que sea un .json válido.');
-        }
+            if (datos.productos && datos.historialVentas) {
+                productos = datos.productos;
+                historialVentas = datos.historialVentas;
+                if (datos.movimientosCaja) { movimientosCaja = datos.movimientosCaja; guardarMovimientosCaja(); }
+                else { movimientosCaja = []; guardarMovimientosCaja(); }
+                guardarProductos();
+                guardarHistorial();
+                productosFiltrados = [...productos];
+                actualizarListaProductos();
+                actualizarInterfazVenta();
+                actualizarHistorial();
+                llenarSelectAnios();
+                actualizarListaMovimientos();
+                actualizarResumenFinanzas();
+                alert(`✅ Datos restaurados.\nProductos: ${productos.length}\nVentas: ${historialVentas.length}\nMovimientos de caja: ${movimientosCaja.length}`);
+            } else { alert('❌ Archivo no válido.'); }
+        } catch (error) { alert('❌ Error al leer el archivo.'); }
     };
     lector.readAsText(archivo);
     event.target.value = '';
 }
+
 // ==================== CAMBIO DE PIN ====================
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btnCambiarPIN')?.addEventListener('click', abrirModalCambioPIN);
@@ -906,72 +707,39 @@ function abrirModalCambioPIN() {
     document.getElementById('mensajePIN').style.display = 'none';
     document.getElementById('pinActual').focus();
 }
-
-function cerrarModalCambioPIN() {
-    document.getElementById('modalCambiarPIN').style.display = 'none';
-}
-
+function cerrarModalCambioPIN() { document.getElementById('modalCambiarPIN').style.display = 'none'; }
 function cambiarPIN() {
     const actual = document.getElementById('pinActual').value;
     const nuevo = document.getElementById('pinNuevo').value;
     const confirmacion = document.getElementById('pinConfirmacion').value;
     const pista = document.getElementById('pinPista').value.trim();
     const mensaje = document.getElementById('mensajePIN');
-
     PIN_CORRECTO = obtenerPIN();
-
-    if (actual !== PIN_CORRECTO) {
-        mensaje.textContent = '❌ PIN actual incorrecto';
-        mensaje.style.display = 'block';
-        return;
-    }
-    if (nuevo.length !== 4 || !/^\d{4}$/.test(nuevo)) {
-        mensaje.textContent = '❌ El PIN debe ser de 4 dígitos';
-        mensaje.style.display = 'block';
-        return;
-    }
-    if (nuevo !== confirmacion) {
-        mensaje.textContent = '❌ Los PINs no coinciden';
-        mensaje.style.display = 'block';
-        return;
-    }
-
-    // Guardar nuevo PIN y pista
+    if (actual !== PIN_CORRECTO) { mensaje.textContent = '❌ PIN actual incorrecto'; mensaje.style.display = 'block'; return; }
+    if (nuevo.length !== 4 || !/^\d{4}$/.test(nuevo)) { mensaje.textContent = '❌ El PIN debe ser de 4 dígitos'; mensaje.style.display = 'block'; return; }
+    if (nuevo !== confirmacion) { mensaje.textContent = '❌ Los PINs no coinciden'; mensaje.style.display = 'block'; return; }
     localStorage.setItem('pin', nuevo);
-    localStorage.setItem('pin_hint', pista); // Guardar la pista (aunque esté vacía)
+    localStorage.setItem('pin_hint', pista);
     PIN_CORRECTO = nuevo;
     cerrarModalCambioPIN();
     alert('✅ PIN cambiado exitosamente.');
 }
 
 // ==================== FINANZAS ====================
-let movimientosCaja = [];
-
-// Cargar movimientos guardados
 function cargarMovimientosCaja() {
     const movs = localStorage.getItem('movimientosCaja');
     if (movs) movimientosCaja = JSON.parse(movs);
     actualizarListaMovimientos();
     actualizarResumenFinanzas();
 }
-
-function guardarMovimientosCaja() {
-    localStorage.setItem('movimientosCaja', JSON.stringify(movimientosCaja));
-}
+function guardarMovimientosCaja() { localStorage.setItem('movimientosCaja', JSON.stringify(movimientosCaja)); }
 
 function agregarMovimientoCaja(tipo, monto, fecha, motivo) {
-    movimientosCaja.push({
-        id: Date.now(),
-        tipo,
-        monto: parseFloat(monto),
-        fecha: fecha || new Date().toISOString().split('T')[0],
-        motivo: motivo.trim()
-    });
+    movimientosCaja.push({ id: Date.now(), tipo, monto: parseFloat(monto), fecha: fecha || new Date().toISOString().split('T')[0], motivo: motivo.trim() });
     guardarMovimientosCaja();
     actualizarListaMovimientos();
     actualizarResumenFinanzas();
 }
-
 function eliminarMovimientoCaja(id) {
     if (!confirm('¿Eliminar este movimiento?')) return;
     movimientosCaja = movimientosCaja.filter(m => m.id !== id);
@@ -979,87 +747,51 @@ function eliminarMovimientoCaja(id) {
     actualizarListaMovimientos();
     actualizarResumenFinanzas();
 }
-
 function actualizarListaMovimientos() {
     const lista = document.getElementById('listaMovimientos');
     if (!lista) return;
-    
-    if (movimientosCaja.length === 0) {
-        lista.innerHTML = '<div class="empty-state">No hay movimientos registrados</div>';
-        return;
-    }
-    
-    // Ordenar por fecha descendente
+    if (movimientosCaja.length === 0) { lista.innerHTML = '<div class="empty-state">No hay movimientos registrados</div>'; return; }
     movimientosCaja.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
-    
     lista.innerHTML = movimientosCaja.map(m => {
         const esInyeccion = m.tipo === 'inyeccion';
-        const claseTipo = esInyeccion ? 'inyeccion' : 'extraccion';
         const signo = esInyeccion ? '+' : '-';
-        const claseMonto = esInyeccion ? 'positivo' : 'negativo';
-        return `
-        <div class="movimiento-item ${claseTipo}">
+        return `<div class="movimiento-item ${esInyeccion ? 'inyeccion' : 'extraccion'}">
             <div class="movimiento-info">
                 <span class="movimiento-tipo">${esInyeccion ? '💉 Inyección' : '💸 Extracción'}</span>
                 <span class="movimiento-fecha">📅 ${new Date(m.fecha + 'T00:00:00').toLocaleDateString('es-ES', { day:'2-digit', month:'2-digit', year:'numeric' })}</span>
                 <span class="movimiento-motivo">${m.motivo || 'Sin motivo'}</span>
             </div>
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <span class="movimiento-monto ${claseMonto}">${signo}$${m.monto.toFixed(2)}</span>
+            <div style="display:flex;align-items:center;gap:10px;">
+                <span class="movimiento-monto ${esInyeccion ? 'positivo' : 'negativo'}">${signo}$${m.monto.toFixed(2)}</span>
                 <button class="btn-quitar" onclick="eliminarMovimientoCaja(${m.id})">🗑️</button>
             </div>
         </div>`;
     }).join('');
 }
-
 function actualizarResumenFinanzas() {
-    // Calcular valor del inventario (costo * stock actual)
     const invCosto = productos.reduce((sum, p) => sum + (p.precioCosto * (p.stock || 0)), 0);
-    
-    // Calcular ganancia neta de todas las ventas
-    const gananciaVentas = historialVentas.reduce((sum, v) => {
-        return sum + v.productos.reduce((s, p) => s + ((p.precio - (p.precioCosto || 0)) * p.cantidad), 0);
-    }, 0);
-    
-    // Sumar inyecciones y extracciones
-    const inyecciones = movimientosCaja
-        .filter(m => m.tipo === 'inyeccion')
-        .reduce((sum, m) => sum + m.monto, 0);
-    const extracciones = movimientosCaja
-        .filter(m => m.tipo === 'extraccion')
-        .reduce((sum, m) => sum + m.monto, 0);
-    
-    // Caja = (ganancias acumuladas) + inyecciones - extracciones
+    const gananciaVentas = historialVentas.reduce((sum, v) => sum + v.productos.reduce((s, p) => s + ((p.precio - (p.precioCosto || 0)) * p.cantidad), 0), 0);
+    const inyecciones = movimientosCaja.filter(m => m.tipo === 'inyeccion').reduce((sum, m) => sum + m.monto, 0);
+    const extracciones = movimientosCaja.filter(m => m.tipo === 'extraccion').reduce((sum, m) => sum + m.monto, 0);
     const caja = gananciaVentas + inyecciones - extracciones;
-    
-    // Patrimonio total = valor inventario + caja
     const patrimonio = invCosto + caja;
-    
-    // Actualizar las tarjetas
     document.getElementById('finInvCosto').textContent = `$${invCosto.toFixed(2)}`;
     document.getElementById('finGananciaVentas').textContent = `$${gananciaVentas.toFixed(2)}`;
     document.getElementById('finCaja').textContent = `$${caja.toFixed(2)}`;
     document.getElementById('finPatrimonio').textContent = `$${patrimonio.toFixed(2)}`;
 }
 
-// Eventos
 document.getElementById('btnAgregarMovimiento')?.addEventListener('click', () => {
     const tipo = document.getElementById('tipoMovimiento').value;
     const monto = document.getElementById('montoMovimiento').value;
     const fecha = document.getElementById('fechaMovimiento').value;
     const motivo = document.getElementById('motivoMovimiento').value;
-    
-    if (!monto || isNaN(parseFloat(monto)) || parseFloat(monto) <= 0) {
-        alert('Ingresa un monto válido.');
-        return;
-    }
-    
+    if (!monto || isNaN(parseFloat(monto)) || parseFloat(monto) <= 0) { alert('Ingresa un monto válido.'); return; }
     agregarMovimientoCaja(tipo, monto, fecha, motivo);
     document.getElementById('montoMovimiento').value = '';
     document.getElementById('motivoMovimiento').value = '';
     document.getElementById('fechaMovimiento').value = '';
 });
-
 document.getElementById('btnLimpiarMovimientos')?.addEventListener('click', () => {
     if (movimientosCaja.length > 0 && confirm('¿Eliminar todo el historial de movimientos?')) {
         movimientosCaja = [];
@@ -1068,31 +800,19 @@ document.getElementById('btnLimpiarMovimientos')?.addEventListener('click', () =
         actualizarResumenFinanzas();
     }
 });
+document.querySelector('[data-tab="finanzas"]')?.addEventListener('click', () => { actualizarResumenFinanzas(); });
 
-// Actualizar finanzas al cambiar a la pestaña finanzas
-document.querySelector('[data-tab="finanzas"]')?.addEventListener('click', () => {
-    actualizarResumenFinanzas();
-});
-
-// Añadir la carga al inicio
-document.addEventListener('DOMContentLoaded', () => {
-    cargarMovimientosCaja();
-});
-
-// ==================== INICIALIZAR ====================
+// ==================== INICIALIZAR Y CORRECCIONES FINALES ====================
 cargarDatos();
 
-// ==================== CORRECCIÓN: Eliminar todos los productos ====================
-// Se reemplazó la llamada a 'actualizarSelectProductos()' por 'actualizarListaProductos()'
-// para que la lista se refresque correctamente.
 document.getElementById('btnEliminarTodosProductos').addEventListener('click', () => {
     if (productos.length > 0 && confirm('¿Eliminar TODOS los productos?')) {
         productos = [];
         guardarProductos();
         cancelarEdicion();
         filtrarProductos();
-        actualizarListaProductos(); // ← CORRECCIÓN AQUÍ
-        actualizarInterfazVenta();   // para que también se actualice la pestaña de ventas
+        actualizarListaProductos();
+        actualizarInterfazVenta();
     }
 });
 
