@@ -826,6 +826,7 @@ function respaldarDatos() {
     const datos = {
         productos: productos,
         historialVentas: historialVentas,
+        movimientosCaja: movimientosCaja,  // ← NUEVO: incluye finanzas
         fechaRespaldo: new Date().toISOString(),
         version: '3.0'
     };
@@ -857,18 +858,29 @@ function restaurarDatos(event) {
         try {
             const datos = JSON.parse(e.target.result);
             
-            if (datos.productos && datos.historialVentas) {
-                productos = datos.productos;
-                historialVentas = datos.historialVentas;
-                guardarProductos();
-                guardarHistorial();
-                productosFiltrados = [...productos];
-                actualizarListaProductos();
-                actualizarInterfazVenta();
-                actualizarHistorial();
-                llenarSelectAnios();
-                actualizarResumenFinanzas();
-                alert(`✅ Datos restaurados exitosamente.\nProductos: ${productos.length}\nVentas: ${historialVentas.length}`);
+          if (datos.productos && datos.historialVentas) {
+    productos = datos.productos;
+    historialVentas = datos.historialVentas;
+    
+    // Restaurar también movimientos de caja si existen en el respaldo
+    if (datos.movimientosCaja) {
+        movimientosCaja = datos.movimientosCaja;
+        guardarMovimientosCaja();
+    } else {
+        movimientosCaja = [];
+        guardarMovimientosCaja();
+    }
+    
+    guardarProductos();
+    guardarHistorial();
+    productosFiltrados = [...productos];
+    actualizarListaProductos();
+    actualizarInterfazVenta();
+    actualizarHistorial();
+    llenarSelectAnios();
+    actualizarListaMovimientos();      // ← NUEVO: actualiza la lista de finanzas
+    actualizarResumenFinanzas();       // ← Ya existía
+    alert(`✅ Datos restaurados exitosamente.\nProductos: ${productos.length}\nVentas: ${historialVentas.length}\nMovimientos de caja: ${movimientosCaja.length}`);
             } else {
                 alert('❌ El archivo no es válido.');
             }
