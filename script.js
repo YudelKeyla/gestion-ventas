@@ -359,7 +359,15 @@ function cerrarModalProductoVenta() {
 function actualizarListaModalProductos(termino = '') {
     const term = termino.trim().toLowerCase();
     const btnLimpiar = document.getElementById('btnLimpiarBusquedaVenta');
-    let productosFiltrados = productos;
+    // Ordenar alfabéticamente antes de filtrar
+    let productosFiltrados = [...productos].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+    
+    if (term) {
+        productosFiltrados = productosFiltrados.filter(p => p.nombre.toLowerCase().includes(term));
+        btnLimpiar.style.display = 'flex';
+    } else {
+        btnLimpiar.style.display = 'none';
+    }
     
     if (term) {
         productosFiltrados = productos.filter(p => p.nombre.toLowerCase().includes(term));
