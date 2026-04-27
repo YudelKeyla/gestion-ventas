@@ -315,7 +315,9 @@ function filtrarProductos() {
 }
 
 function actualizarListaProductos() {
-    const productosAMostrar = productosFiltrados;
+    // Ordenar alfabéticamente antes de mostrar
+    const productosOrdenados = [...productosFiltrados].sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+    const productosAMostrar = productosOrdenados;
     cantidadProductosSpan.textContent = productos.length;
     if (productos.length === 0) {
         listaProductosDiv.innerHTML = '<div class="empty-state">No hay productos. Agrega uno arriba 👆</div>';
